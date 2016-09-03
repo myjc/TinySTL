@@ -10,9 +10,11 @@ TARGET = TinySTL
 TEMPLATE = lib
 CONFIG += staticlib
 
-SOURCES += tinystl.cpp
+SOURCES +=
 
-HEADERS += tinystl.h
+HEADERS += \
+    TypeTraits.h \
+    Iterator.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
