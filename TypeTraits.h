@@ -3,136 +3,136 @@
 
 
 namespace TinySTL {
-    struct _True_Type{};
-    struct _False_Type{};
+    struct _true_type{};
+    struct _false_type{};
 
     template<typename T>
-    struct __Type_Traits
+    struct _type_traits
     {
-        typedef _False_Type has_trivial_default_constructor;
-        typedef _False_Type has_trivial_copy_constructor;
-        typedef _False_Type has_trivial_assignment_operator;
-        typedef _False_Type is_POD_type;
+        typedef _false_type has_trivial_default_constructor;
+        typedef _false_type has_trivial_copy_constructor;
+        typedef _false_type has_trivial_assignment_operator;
+        typedef _false_type is_POD_type;
     };
     //for build in type
-    template<> struct __Type_Traits<bool>
+    template<> struct _type_traits<bool>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
 
-    template<> struct __Type_Traits<int>
+    template<> struct _type_traits<int>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
 
-    template<> struct __Type_Traits<unsigned int>
+    template<> struct _type_traits<unsigned int>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
 
-    template<> struct __Type_Traits<long>
+    template<> struct _type_traits<long>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
 
-    template<> struct __Type_Traits<unsigned long>
+    template<> struct _type_traits<unsigned long>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
 
-    template<> struct __Type_Traits<short>
+    template<> struct _type_traits<short>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
-    template<> struct __Type_Traits<unsigned short>
+    template<> struct _type_traits<unsigned short>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
 
-    template<> struct __Type_Traits<char>
+    template<> struct _type_traits<char>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
-    template<> struct __Type_Traits<signed char>
+    template<> struct _type_traits<signed char>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
-    template<> struct __Type_Traits<unsigned char>
+    template<> struct _type_traits<unsigned char>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
-    template<> struct __Type_Traits<float>
+    template<> struct _type_traits<float>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
-    template<> struct __Type_Traits<double>
+    template<> struct _type_traits<double>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
-    template<> struct __Type_Traits<long double>
+    template<> struct _type_traits<long double>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
     // for bulid in pointer
-    template<typename T> struct __Type_Traits<T*>
+    template<typename T> struct _type_traits<T*>
     {
 
-        typedef _True_Type has_trivial_default_constructor;
-        typedef _True_Type has_trivial_copy_constructor;
-        typedef _True_Type has_trivial_assignment_operator;
-        typedef _True_Type is_POD_type;
+        typedef _true_type has_trivial_default_constructor;
+        typedef _true_type has_trivial_copy_constructor;
+        typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type is_POD_type;
     };
 
 
