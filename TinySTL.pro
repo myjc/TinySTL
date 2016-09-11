@@ -14,7 +14,9 @@ SOURCES +=
 
 HEADERS += \
     TypeTraits.h \
-    Iterator.h
+    Iterator.h \
+    Allocator.h \
+    Construct.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
