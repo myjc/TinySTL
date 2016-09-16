@@ -10,13 +10,15 @@ TARGET = TinySTL
 TEMPLATE = lib
 CONFIG += staticlib
 
-SOURCES +=
+SOURCES += \
+    Impl/Alloc.cpp
 
 HEADERS += \
     TypeTraits.h \
     Iterator.h \
     Allocator.h \
-    Construct.h
+    Construct.h \
+    Alloc.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
