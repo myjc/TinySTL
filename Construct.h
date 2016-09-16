@@ -2,6 +2,7 @@
 #define CONSTRUCT_H
 
 #include<new>
+#include "TypeTraits.h"
 
 namespace TinySTL {
 template<typename T,typename Value>
