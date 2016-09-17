@@ -18,7 +18,8 @@ HEADERS += \
     Iterator.h \
     Allocator.h \
     Construct.h \
-    Alloc.h
+    Alloc.h \
+    uninitialize.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
