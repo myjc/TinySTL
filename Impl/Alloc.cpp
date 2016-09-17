@@ -41,14 +41,14 @@ namespace TinySTL
         if(nobjs == 1)
             return chunk;
         obj **my_free_list = free_list + FREELIST_INDEX(bytes);
-        obj *result = static_cast<obj*>(chunk);
-        obj *next_obj = static_cast<obj*>(chunk +n);
+        obj *result = reinterpret_cast<obj*>(chunk);
+        obj *next_obj = reinterpret_cast<obj*>(chunk +bytes);
         obj *current_obj = nullptr;
         *my_free_list = next_obj;
         for(int i = 0;;i++) //return the first one,remains nobjs-1;
         {
             current_obj = next_obj;
-            next_obj = static_cast<obj*>(static_cast<char*>(next_obj)+bytes);
+            next_obj = reinterpret_cast<obj*>(reinterpret_cast<char*>(next_obj)+bytes);
             if(nobjs -1 == i)
             {
                 current_obj->next_free_chunk = nullptr;
@@ -92,7 +92,7 @@ namespace TinySTL
            if(bytes_left > 0)
            {
                obj **my_free_list = free_list+FREELIST_INDEX(bytes_left);
-               obj *left_chunk = static_cast<obj*>(start_free);
+               obj *left_chunk = reinterpret_cast<obj*>(start_free);
                left_chunk->next_free_chunk = *my_free_list;
                *my_free_list = left_chunk;
            }
@@ -107,14 +107,13 @@ namespace TinySTL
                    if(node != nullptr)
                    {
                        (*my_free_list)->next_free_chunk = node->next_free_chunk;
-                       start_free = static_cast<char*>(node);
+                       start_free = reinterpret_cast<char*>(node);
                        end_free = start_free + i;
                        return chunk_alloc(size,nobjs);
                    }
 
                }
            end_free == nullptr;
-
            }
            heap_size += bytes_to_get;
            end_free = start_free + bytes_to_get;
