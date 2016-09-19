@@ -12,6 +12,7 @@ namespace TinySTL {
         typedef _false_type has_trivial_default_constructor;
         typedef _false_type has_trivial_copy_constructor;
         typedef _false_type has_trivial_assignment_operator;
+        typedef _false_type has_trivial_destructor;
         typedef _false_type is_POD_type;
     };
     //for build in type
@@ -21,6 +22,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
 
@@ -30,6 +32,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
 
@@ -39,6 +42,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
 
@@ -48,6 +52,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
 
@@ -57,6 +62,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
 
@@ -66,6 +72,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
     template<> struct _type_traits<unsigned short>
@@ -74,6 +81,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
 
@@ -83,6 +91,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
     template<> struct _type_traits<signed char>
@@ -91,6 +100,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
     template<> struct _type_traits<unsigned char>
@@ -99,6 +109,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
     template<> struct _type_traits<float>
@@ -107,6 +118,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
     template<> struct _type_traits<double>
@@ -115,6 +127,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
     template<> struct _type_traits<long double>
@@ -123,6 +136,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
     // for bulid in pointer
@@ -132,6 +146,7 @@ namespace TinySTL {
         typedef _true_type has_trivial_default_constructor;
         typedef _true_type has_trivial_copy_constructor;
         typedef _true_type has_trivial_assignment_operator;
+        typedef _true_type has_trivial_destructor;
         typedef _true_type is_POD_type;
     };
 
