@@ -1,7 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
-#include<functional>
 #include<cstddef>
+#include"Allocator.h"
 namespace TinySTL
 {
 template<typename T,typename Alloc = alloc> class Vector
@@ -14,7 +14,6 @@ public:
     typedef value_type& reference;
     typedef size_t size_type;
     typedef ptrdiff_t difference_type;
-    typedef size_t size_type;
 protected:
     typedef allocator<value_type,Alloc> data_allocator;
 private:
@@ -35,19 +34,37 @@ public:
     Vector& operator =(Vector&& vec);
 
     ~Vector();
-    //容量相关
+    //iterator
     iterator begin(){return start;}
     iterator end() {return finish;}
+    //容量相关
     size_type size()const{return finish - start;}
     bool empty()const{return finish == start;}
     size_type capacity()const{return end_of_storage - start;}
     void resize(const size_type size, value_type val = value_type());
     void reserve(const size_type size);
     void shrink_to_fit();
-    //容器操作
+    //元素访问
     reference operator[](const size_type index){return *(start+index);}
     reference at(const size_type index);
+    reference front(){return *begin();}
+    reference back(){return *(end()-1);}
+    pointer data(){return start;}
+    //容器操作
     void push_back(const value_type& value);
+    void pop_back();
+    void clear();
+    iterator erase(iterator position);
+    template<typename InputIterator>
+    void erase(InputIterator first,InputIterator last);
+    iterator insert(iterator position,const value_type& value);
+    template<typename InputIterator>
+    void insert(iterator position,InputIterator first, InputIterator last);
+    void insert(iterator position, const size_type nobjs,const value_type &value);
+
+
+
+
 
 };//Vector
 }//namesapce TinySTL

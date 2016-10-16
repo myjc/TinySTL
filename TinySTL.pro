@@ -21,7 +21,8 @@ HEADERS += \
     Construct.h \
     Alloc.h \
     Uninitialize.h \
-    Vector.h
+    Vector.h \
+    Algorithm.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
