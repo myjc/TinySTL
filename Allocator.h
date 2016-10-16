@@ -1,12 +1,14 @@
 #ifndef ALLOCATOR_H
 #define ALLOCATOR_H
 #include <cstddef>
+#include "Alloc.h"
+#include "Construct.h"
 namespace TinySTL
 {
 
 class alloc; // allocate deallocate Impl
 
-template<typename T>
+template<typename T,typename Alloc = alloc>
 class allocator
 {
 public:
@@ -18,24 +20,33 @@ public:
     typedef size_t      size_type;
     typedef ptrdiff_t   difference_type;
 public:
-    static T* allocate(size_t n)
+    static T* allocate(size_t nobjs)
     {
-        return n == 0 ? nullptr : static_cast<T*>(alloc::allocate(n * sizeof(T)));
+        return nobjs == 0 ? nullptr : static_cast<T*>(Alloc::allocate(nobjs * sizeof(T)));
     }
     static T* allocate()
     {
-        return static_cast<T*>(alloc::allocate(sizeof(T)));
+        return static_cast<T*>(Alloc::allocate(sizeof(T)));
     }
-    static void deallocate(T *p, size_t n)
+    static void deallocate(T *p, size_t nobjs)
     {
-        if( n != 0)
-            alloc::deallocate(p, n*sizeof(T));
+        if( nobjs != 0)
+            Alloc::deallocate(p, nobjs*sizeof(T));
     }
     static void deallocate(T *p)
     {
-        alloc::deallocate(p,sizeof(T));
+        Alloc::deallocate(p,sizeof(T));
+    }
+    template<typename Args>
+    static void construct(T *p,const Args& args)
+    {
+        TinySTL::construct(p,args);
+    }
+    static void destroy(T* p)
+    {
+        TinySTL::destroy(p);
     }
 
 };
-}
+}//命名空间
 #endif // ALLOCATOR_H
