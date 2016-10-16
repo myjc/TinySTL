@@ -11,7 +11,8 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 SOURCES += \
-    Impl/Alloc.cpp
+    Impl/Alloc.cpp \
+    Impl/Vector.cpp
 
 HEADERS += \
     TypeTraits.h \
@@ -19,7 +20,8 @@ HEADERS += \
     Allocator.h \
     Construct.h \
     Alloc.h \
-    Uninitialize.h
+    Uninitialize.h \
+    Vector.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
