@@ -23,7 +23,8 @@ HEADERS += \
     Uninitialize.h \
     Vector.h \
     Algorithm.h \
-    Memory.h
+    Memory.h \
+    Utility.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

@@ -1,5 +1,5 @@
-#ifndef ALLOC_H
-#define ALLOC_H
+#ifndef TinySTL_ALLOC_H
+#define TinySTL_ALLOC_H
 #include <cstddef>
 #include <cstdlib>
 namespace TinySTL

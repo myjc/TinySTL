@@ -1,5 +1,5 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#ifndef TinySTL_VECTOR_H
+#define TinySTL_VECTOR_H
 #include<cstddef>
 #include"Allocator.h"
 namespace TinySTL
@@ -30,8 +30,8 @@ public:
     template<typename InputIterator>
     Vector(InputIterator first,InputIterator last);
 
-    Vector& operator =(const Vector& vec);
-    Vector& operator =(Vector&& vec);
+    Vector& operator=(const Vector& vec);
+    Vector& operator=(Vector&& vec);
 
     ~Vector();
     //iterator

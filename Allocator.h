@@ -1,5 +1,5 @@
-#ifndef ALLOCATOR_H
-#define ALLOCATOR_H
+#ifndef TinySTL_ALLOCATOR_H
+#define TinySTL_ALLOCATOR_H
 #include <cstddef>
 #include "Alloc.h"
 #include "Construct.h"

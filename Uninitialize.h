@@ -1,5 +1,5 @@
-#ifndef UNINITIALIZE_H
-#define UNINITIALIZE_H
+#ifndef TinySTL_UNINITIALIZE_H
+#define TinySTL_UNINITIALIZE_H
 #include "TypeTraits.h"
 #include "Iterator.h"
 #include "Construct.h"

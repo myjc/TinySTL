@@ -1,5 +1,5 @@
-#ifndef TINYSTL_H
-#define TINYSTL_H
+#ifndef TINYSTL_TYPETRAITS_H
+#define TINYSTL_TYPETRAITS_H
 
 
 namespace TinySTL {

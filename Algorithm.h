@@ -1,5 +1,5 @@
-#ifndef ALGORITHM_H
-#define ALGORITHM_H
+#ifndef TinySTL_ALGORITHM_H
+#define TinySTL_ALGORITHM_H
 #include <cstring>
 namespace TinySTL {
 
@@ -58,5 +58,6 @@ inline void fill_n(wchar_t *pos, const size_t n, const wchar_t &value)
 {
     memset(pos,static_cast<unsigned char>(value),n*sizeof(wchar_t));
 }
+
 }
 #endif // ALGORITHM_H
