@@ -21,13 +21,6 @@ template<typename T,typename CompareFunc> T min(const T& v1, const T& v2,Compare
     return (func(v1,v2)) ? v1 :v2;
 }
 
-//swap
-template<typename T> void swap(T& v1, T& v2)
-{
-    T temp = v1;
-    v1 = v2;
-    v2 = temp;
-}
 //fill(beg,end,val)
 template<typename ForwardIterator,typename T>
 void fill(ForwardIterator first,ForwardIterator last,const T& val)
