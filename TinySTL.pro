@@ -12,7 +12,8 @@ CONFIG += staticlib
 
 SOURCES += \
     Impl/Alloc.cpp \
-    Impl/Vector.cpp
+    Impl/Vector.cpp \
+    main.cpp
 
 HEADERS += \
     TypeTraits.h \
