@@ -1,7 +1,7 @@
 #ifndef TINYSTL_MEMORY_H
 #define TINYSTL_MEMORY_H
 #include <cstddef>
-#include <utility>
+#include "Utility.h"
 namespace TinySTL
 {
 template<typename ElementType>
@@ -85,11 +85,96 @@ public:
 };
 template<typename T,typename...Args> SharedPtr<T> makeShared(const Args& ...args)
 {
-    return SharedPtr<T>(new T(std::forward<Args>(args)...));
+    return SharedPtr<T>(new T(TinySTL::forward<Args>(args)...));
 }
 template<typename T> inline void swap(SharedPtr<T>& s1, SharedPtr<T>& s2)
 {
     s1.swap(s2);
+}
+}
+namespace TinySTL
+{
+template<typename T>
+struct DefaultDeleter
+{
+    void operator() (T* ptr)
+    {
+        delete ptr;
+        ptr = nullptr;
+    }
+};
+
+template<typename T,typename Deleter = DefaultDeleter>
+class UniquePtr
+{
+public:
+    typedef T ElementType;
+    UniquePtr() = default;
+    explicit UniquePtr(ElementType* ptr):elementPtr(ptr){}
+    explicit UniquePtr(Deleter del):deleter(del){}
+    UniquePtr(const UniquePtr& up) = delete;
+    UniquePtr(UniquePtr&& up)
+    {
+        elementPtr = up.elementPtr;
+    }
+
+    UniquePtr operator=(UniquePtr &&up) = delete;
+
+    UniquePtr& operator=(std::nullptr_t)
+    {
+        deleter(elementPtr);
+        elementPtr = nullptr;
+    }
+
+    ~UniquePtr()
+    {
+        deleter(elementPtr);
+    }
+public:
+    ElementType& operator*()
+    {
+        return *elementPtr;
+    }
+    ElementType* operator->()
+    {
+        return &this->operator *();
+    }
+    ElementType* get(){return elementPtr;}
+    ElementType* release()
+    {
+        ElementType* tmp = elementPtr;
+        elementPtr = nullptr;
+        return tmp;
+    }
+    void reset(){deleter(elementPtr);}
+    void reset(ElementType* ptr)
+    {
+        deleter(elementPtr);
+        elementPtr = ptr;
+    }
+    void reset(std::nullptr_t)
+    {
+        deleter(elementPtr);
+        elementPtr = nullptr;
+    }
+
+
+    void swap(UniquePtr& up)
+    {
+        ElementType* tmpPtr = elementPtr;
+        elementPtr = up.elementPtr;
+        up.elementPtr = tmpPtr;
+    }
+
+
+private:
+    ElementType* elementPtr;
+    Deleter deleter;
+};
+template<typename T>
+void swap(UniquePtr<T>p1,UniquePtr<T>p2)
+{
+    p1.swap(p2);
 }
 }
 
