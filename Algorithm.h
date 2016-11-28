@@ -1,5 +1,5 @@
-#ifndef TinySTL_ALGORITHM_H
-#define TinySTL_ALGORITHM_H
+#ifndef TINYSTL_ALGORITHM_H
+#define TINYSTL_ALGORITHM_H
 #include <cstring>
 namespace TinySTL {
 

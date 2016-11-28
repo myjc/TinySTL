@@ -1,5 +1,5 @@
-#ifndef TinySTL_CONSTRUCT_H
-#define TinySTL_CONSTRUCT_H
+#ifndef TINYSTL_CONSTRUCT_H
+#define TINYSTL_CONSTRUCT_H
 
 #include<new>
 #include "TypeTraits.h"

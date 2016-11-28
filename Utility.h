@@ -1,5 +1,5 @@
-#ifndef TinySTL_UTILITY_H
-#define TinySTL_UTILITY_H
+#ifndef TINYSTL_UTILITY_H
+#define TINYSTL_UTILITY_H
 #include "TypeTraits.h"
 namespace TinySTL
 {
