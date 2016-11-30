@@ -1,6 +1,7 @@
 #ifndef TINYSTL_ALGORITHM_H
 #define TINYSTL_ALGORITHM_H
 #include <cstring>
+#include"Iterator.h"
 namespace TinySTL {
 
 // min max
@@ -78,9 +79,11 @@ inline InputIterator find_if_not(InputIterator beg, InputIterator end, Func func
 }
 //count
 template<typename InputIterator,typename T>
-inline size_t count(InputIterator beg,InputIterator end,const T& val)
+inline typename _iterator_traits<InputIterator>::difference_type
+count(InputIterator beg,InputIterator end,const T& val)
 {
-    size_t quantity = 0;
+    typedef typename _iterator_traits<InputIterator>::difference_type Diff;
+    Diff quantity = 0;
     while (beg != end)
     {
         if(*beg == val)
@@ -91,9 +94,11 @@ inline size_t count(InputIterator beg,InputIterator end,const T& val)
 }
 //count_if
 template<typename InputIterator,typename Func>
-inline size_t count_if(InputIterator beg,InputIterator end,Func func)
+inline typename _iterator_traits<InputIterator>::difference_type
+count_if(InputIterator beg,InputIterator end,Func func)
 {
-    size_t quantity = 0;
+    typedef typename _iterator_traits<InputIterator>::difference_type Diff;
+    Diff quantity = 0;
     while (beg != end)
     {
         if(func(*beg))
@@ -166,6 +171,11 @@ inline ForwardIterator adjacent_find(ForwardIterator beg, ForwardIterator end,Bi
     return end;
 }
 //search_n
+template<typename ForwardItertor>
+inline ForwardItertor search_n(ForwardItertor beg, ForwardItertor end,)
+{
+
+}
 
 }//namesapce TinySTL
 #endif // ALGORITHM_H
