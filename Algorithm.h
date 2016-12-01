@@ -1,6 +1,7 @@
 #ifndef TINYSTL_ALGORITHM_H
 #define TINYSTL_ALGORITHM_H
 #include <cstring>
+#include <cassert>
 #include"Iterator.h"
 namespace TinySTL {
 
@@ -52,10 +53,70 @@ inline void fill_n(wchar_t *pos, const size_t n, const wchar_t &value)
 {
     memset(pos,static_cast<unsigned char>(value),n*sizeof(wchar_t));
 }
+//distance
+template<typename Iterator>
+typename iterator_traits<Iterator>::difference_type
+distance(const Iterator beg,const Iterator end)
+{
+    typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
+    return _distance(beg,end,iterator_category());
 
+}
+template<typename InputIterator>
+typename iterator_traits<InputIterator>::difference_type
+_distance(const InputIterator beg,const InputIterator end,input_iterator_tag)
+{
+    typedef typename iterator_traits<InputIterator>::difference_type difference_type;
+    difference_type dis = 0;
+    while(beg++ != end) ++dis;
+    return dis;
+}
+template<typename RandomAccessIterator>
+typename iterator_traits<RandomAccessIterator>::difference_type
+_distance(const RandomAccessIterator beg,const RandomAccessIterator end,random_access_iterator_tag)
+{
+    return end - beg;
+}
+//advance
+template<typename Iterator,typename Distance>
+void advance(Iterator& iter,Distance n)
+{
+    typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
+    _advance(iter,n,iterator_category());
+}
+template<typename InputIterator,typename Distance>
+void _advance(InputIterator& iter,Distance n,input_iterator_tag)
+{
+    assert(n >= 0);
+    while(n-- != 0) ++iter;
+}
+template<typename BidirectionalIterator,typename Distance>
+void _advance(BidirectionalIterator& iter,Distance n,bidirectional_iterator_tag)
+{
+    if(n > 0)
+    {
+        while(n-- != 0) ++iter;
+    }
+    else
+    {
+        while(n++ != 0) --iter;
+    }
+}
+template<typename RandomAccessIterator,typename Distance>
+void _advance(RandomAccessIterator& iter,Distance n,random_access_iterator_tag)
+{
+    if(n > 0)
+    {
+        iter += n;
+    }
+    else
+    {
+        iter -= (-n);
+    }
+}
 //**************************************************************//
 //*************************查找对象的算法************************//
-
+//1.简单查找算法
 // find
 template<typename InputIterator,typename T>
 inline InputIterator find(InputIterator beg,InputIterator end,const T& val)
@@ -79,10 +140,10 @@ inline InputIterator find_if_not(InputIterator beg, InputIterator end, Func func
 }
 //count
 template<typename InputIterator,typename T>
-inline typename _iterator_traits<InputIterator>::difference_type
+inline typename iterator_traits<InputIterator>::difference_type
 count(InputIterator beg,InputIterator end,const T& val)
 {
-    typedef typename _iterator_traits<InputIterator>::difference_type Diff;
+    typedef typename iterator_traits<InputIterator>::difference_type Diff;
     Diff quantity = 0;
     while (beg != end)
     {
@@ -94,10 +155,10 @@ count(InputIterator beg,InputIterator end,const T& val)
 }
 //count_if
 template<typename InputIterator,typename Func>
-inline typename _iterator_traits<InputIterator>::difference_type
+inline typename iterator_traits<InputIterator>::difference_type
 count_if(InputIterator beg,InputIterator end,Func func)
 {
-    typedef typename _iterator_traits<InputIterator>::difference_type Diff;
+    typedef typename iterator_traits<InputIterator>::difference_type Diff;
     Diff quantity = 0;
     while (beg != end)
     {
@@ -143,6 +204,7 @@ inline bool any_of(InputIterator beg,InputIterator end,UnaryPred pred)
     }
     return false;
 }
+//2.查找重复值算法
 //adjacent_find
 template<typename ForwardItertor>
 inline ForwardItertor adjacent_find(ForwardItertor beg, ForwardItertor end)
@@ -171,11 +233,125 @@ inline ForwardIterator adjacent_find(ForwardIterator beg, ForwardIterator end,Bi
     return end;
 }
 //search_n
-template<typename ForwardItertor>
-inline ForwardItertor search_n(ForwardItertor beg, ForwardItertor end,)
+template<typename ForwardItertor,typename T>
+ForwardItertor search_n(ForwardItertor beg, ForwardItertor end,size_t nobjs,const T& val)
+{
+    ForwardItertor iter = find(beg,end,val);
+    size_t n = nobjs;
+    while(n > 0 && iter != end)
+    {
+        if(*iter == val)
+        {
+            iter++;
+            n--;
+        }
+
+        else
+        {
+            iter = find(++iter,end,val);
+            n = nobjs;
+        }
+    }
+    return iter;
+}
+template<typename ForwardItertor,typename T,typename BinaryPred>
+ForwardItertor search_n(ForwardItertor beg, ForwardItertor end,size_t nobjs,const T& val,BinaryPred pred)
+{
+    ForwardItertor iter = beg;
+    while(iter != end)
+    {
+        if(pred(val,*iter))
+            break;
+        ++iter;
+    }
+    size_t n = nobjs;
+    while(n > 0 && iter != end)
+    {
+        if(pred(val,*iter))
+        {
+            iter++;
+            n--;
+        }
+        else
+        {
+            while(iter != end)
+            {
+                if(pred(val,*iter))
+                    break;
+                ++iter;
+            }
+            n = nobjs;
+        }
+    }
+    return iter;
+}
+//3.查找子序列的算法
+//find_first_of O(N*M)
+template<typename InputIterator,typename ForwardIterator>
+InputIterator find_first_of(InputIterator begin1,InputIterator end1,
+                            ForwardIterator begin2,ForwardIterator end2)
+{
+    while(begin1 != end1)
+    {
+        for(ForwardIterator iter = begin2; iter != end2; ++iter)
+        {
+            if(*iter == *begin1) return begin1;
+        }
+        ++begin1;
+    }
+    return end1;
+}
+template<typename InputIterator,typename ForwardIterator,typename BinaryPred>
+InputIterator find_first_of(InputIterator begin1,InputIterator end1,
+                            ForwardIterator begin2,ForwardIterator end2,
+                            BinaryPred pred)
+{
+    while(begin1 != end1)
+    {
+        for(ForwardIterator iter = begin2; iter != end2; ++iter)
+        {
+            if(pred(*iter,*begin1)) return begin1;
+        }
+        ++begin1;
+    }
+    return end1;
+}
+template<typename ForwardIterator>
+//search
+ForwardIterator search(ForwardIterator beg1,ForwardIterator end1,
+                       ForwardIterator beg2,ForwardIterator end2)
 {
 
+    ForwardIterator toBeFindIter = beg2;
+    ForwardIterator res = find(beg1,end1,*toBeFindIter);
+    ForwardIterator iter = res;
+    if(distance(iter,end1) < distance(beg2,end2))
+    {
+        return end1;
+    }
+    while(iter != end1 && toBeFindIter != end2)
+    {
+        if(*iter == *toBeFindIter)
+        {
+            ++iter;
+            ++toBeFindIter;
+        }
+        else
+        {
+            res = find(iter,end1,*toBeFindIter);
+            iter = res;
+            toBeFindIter = beg2;
+        }
+    }
+    if(toBeFindIter == end2)// found
+    {
+        return res;
+    }
+    else
+    {
+        return iter;
+    }
 }
-
+//find_end
 }//namesapce TinySTL
 #endif // ALGORITHM_H
