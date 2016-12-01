@@ -179,4 +179,4 @@ struct BitNot:public UnaryFunctor<T,T>
     }
 };
 }//namespace TiynySTL
-#endif // FUNCTIONAL_H
+#endif // TINYSTL_FUNCTIONAL_H
