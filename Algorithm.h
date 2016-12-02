@@ -34,13 +34,13 @@ inline void fill(char* first, char* last,const char& value)
 {
     memset(first, static_cast<unsigned char>(value),last - first);
 }
-inline void fill(wchar_t* first, wchar_t last, const wchar_t& value)
+inline void fill(wchar_t* first, wchar_t* last, const wchar_t& value)
 {
      memset(first, static_cast<unsigned char>(value),(last - first)*sizeof(wchar_t));
 }
 //fill_n(beg,n,val)
 template<typename ForwardIterator,typename T>
-void fill_n(ForwardIterator pos,const size_t n,const T& value)
+void fill_n(ForwardIterator pos,size_t n,const T& value)
 {
     for(;n > 0; n--,pos++)
         *pos = value;
@@ -54,36 +54,32 @@ inline void fill_n(wchar_t *pos, const size_t n, const wchar_t &value)
     memset(pos,static_cast<unsigned char>(value),n*sizeof(wchar_t));
 }
 //distance
-template<typename Iterator>
-typename iterator_traits<Iterator>::difference_type
-distance(const Iterator beg,const Iterator end)
-{
-    typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
-    return _distance(beg,end,iterator_category());
-
-}
 template<typename InputIterator>
-typename iterator_traits<InputIterator>::difference_type
-_distance(const InputIterator beg,const InputIterator end,input_iterator_tag)
+typename IteratorTraits<InputIterator>::difference_type
+distance_aux(InputIterator beg,InputIterator end,input_iterator_tag)
 {
-    typedef typename iterator_traits<InputIterator>::difference_type difference_type;
+    typedef typename IteratorTraits<InputIterator>::difference_type difference_type;
     difference_type dis = 0;
     while(beg++ != end) ++dis;
     return dis;
 }
 template<typename RandomAccessIterator>
-typename iterator_traits<RandomAccessIterator>::difference_type
-_distance(const RandomAccessIterator beg,const RandomAccessIterator end,random_access_iterator_tag)
+typename IteratorTraits<RandomAccessIterator>::difference_type
+distance_aux(RandomAccessIterator beg,RandomAccessIterator end,random_access_iterator_tag)
 {
     return end - beg;
 }
-//advance
-template<typename Iterator,typename Distance>
-void advance(Iterator& iter,Distance n)
+template<typename Iterator>
+typename IteratorTraits<Iterator>::difference_type
+distance(Iterator beg,Iterator end)
 {
-    typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
-    _advance(iter,n,iterator_category());
+    typedef typename IteratorTraits<Iterator>::iterator_category iterator_category;
+    return distance_aux(beg,end,iterator_category());
+
 }
+
+//advance
+
 template<typename InputIterator,typename Distance>
 void _advance(InputIterator& iter,Distance n,input_iterator_tag)
 {
@@ -114,6 +110,12 @@ void _advance(RandomAccessIterator& iter,Distance n,random_access_iterator_tag)
         iter -= (-n);
     }
 }
+template<typename Iterator,typename Distance>
+void advance(Iterator& iter,Distance n)
+{
+    typedef typename IteratorTraits<Iterator>::iterator_category iterator_category;
+    _advance(iter,n,iterator_category());
+}
 //**************************************************************//
 //*************************查找对象的算法************************//
 //1.简单查找算法
@@ -140,10 +142,10 @@ inline InputIterator find_if_not(InputIterator beg, InputIterator end, Func func
 }
 //count
 template<typename InputIterator,typename T>
-inline typename iterator_traits<InputIterator>::difference_type
+inline typename IteratorTraits<InputIterator>::difference_type
 count(InputIterator beg,InputIterator end,const T& val)
 {
-    typedef typename iterator_traits<InputIterator>::difference_type Diff;
+    typedef typename IteratorTraits<InputIterator>::difference_type Diff;
     Diff quantity = 0;
     while (beg != end)
     {
@@ -155,10 +157,10 @@ count(InputIterator beg,InputIterator end,const T& val)
 }
 //count_if
 template<typename InputIterator,typename Func>
-inline typename iterator_traits<InputIterator>::difference_type
+inline typename IteratorTraits<InputIterator>::difference_type
 count_if(InputIterator beg,InputIterator end,Func func)
 {
-    typedef typename iterator_traits<InputIterator>::difference_type Diff;
+    typedef typename IteratorTraits<InputIterator>::difference_type Diff;
     Diff quantity = 0;
     while (beg != end)
     {
@@ -321,36 +323,38 @@ template<typename ForwardIterator>
 ForwardIterator search(ForwardIterator beg1,ForwardIterator end1,
                        ForwardIterator beg2,ForwardIterator end2)
 {
+    typedef typename IteratorTraits<ForwardIterator>::difference_type Distance;
 
-    ForwardIterator toBeFindIter = beg2;
-    ForwardIterator res = find(beg1,end1,*toBeFindIter);
-    ForwardIterator iter = res;
-    if(distance(iter,end1) < distance(beg2,end2))
+    ForwardIterator res = find(beg1,end1,*beg2);
+    ForwardIterator iter1 = res;
+    ForwardIterator iter2 = beg2;
+    Distance dist1 = TinySTL::distance(res,end1);//序列1剩余长度
+    Distance dist2 = TinySTL::distance(beg2,end2);//序列2长度
+    if(dist1 < dist2) //序列1剩余长度小于序列2
     {
         return end1;
     }
-    while(iter != end1 && toBeFindIter != end2)
+    while(iter2 != end2)
     {
-        if(*iter == *toBeFindIter)
+
+        if(*iter1 == *iter2)
         {
-            ++iter;
-            ++toBeFindIter;
+            ++iter1;
+            ++iter2;
         }
         else
         {
-            res = find(iter,end1,*toBeFindIter);
-            iter = res;
-            toBeFindIter = beg2;
+            res = find(iter1,end1,*beg2);
+            iter1 = res;
+            iter2 = beg2;
+            dist1 =TinySTL::distance(res,end1);
+            if(dist1 < dist2)////序列1剩余长度小于序列2
+            {
+                return end1;
+            }
         }
     }
-    if(toBeFindIter == end2)// found
-    {
-        return res;
-    }
-    else
-    {
-        return iter;
-    }
+    return res;//found
 }
 //find_end
 }//namesapce TinySTL
