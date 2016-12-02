@@ -25,7 +25,7 @@ struct iterator
 //iterator traits
 
 template<typename I>
-struct iterator_traits
+struct IteratorTraits
 {
     typedef typename I::iterator_category       iterator_category;
     typedef typename I::difference_type         difference_type;
@@ -37,7 +37,7 @@ struct iterator_traits
 //build in pointer
 
 template<typename T>
-struct iterator_traits<T*>
+struct IteratorTraits<T*>
 {
     typedef random_access_iterator_tag          iterator_category;
     typedef T                                   value_type;
@@ -49,7 +49,7 @@ struct iterator_traits<T*>
 
 //const pointer
 template<typename T>
-struct iterator_traits<const T*>
+struct IteratorTraits<const T*>
 {
     typedef random_access_iterator_tag          iterator_category;
     typedef T                                   value_type;
@@ -60,22 +60,22 @@ struct iterator_traits<const T*>
 };
 
 template<typename Iterator>
-inline typename iterator_traits<Iterator>::iterator_category iterator_category(const Iterator&)
+inline typename IteratorTraits<Iterator>::iterator_category iterator_category(const Iterator&)
 {
-    typedef typename iterator_traits<Iterator>::iterator_category category;
+    typedef typename IteratorTraits<Iterator>::iterator_category category;
     return category();
 }
 
 template<typename Iterator>
-inline typename iterator_traits<Iterator>::difference_type* distance_type(const Iterator&)
+inline typename IteratorTraits<Iterator>::difference_type* distance_type(const Iterator&)
 {
-    return static_cast<typename iterator_traits<Iterator>::difference_type*>(0);
+    return static_cast<typename IteratorTraits<Iterator>::difference_type*>(0);
 }
 
 template<typename Iterator>
-inline typename iterator_traits<Iterator>::value_type* value_type(const Iterator&)
+inline typename IteratorTraits<Iterator>::value_type* value_type(const Iterator&)
 {
-    return static_cast<typename iterator_traits<Iterator>::value_type*>(0);
+    return static_cast<typename IteratorTraits<Iterator>::value_type*>(0);
 }
 
 }
