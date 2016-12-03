@@ -25,51 +25,51 @@ template<typename T,typename CompareFunc> T min(const T& v1, const T& v2,Compare
 }
 //for_each
 template<typename InputIterator, typename UnaryPred>
-void for_each(InputIterator beg, InputIterator end, UnaryPred pred)
+void for_each(InputIterator begin, InputIterator end, UnaryPred pred)
 {
-    while(beg++ != end)
+    while(begin++ != end)
     {
-        pred(*beg);
+        pred(*begin);
     }
 }
 //mismatch 要求序列2长度不小于序列1,否则发生未定义行为
 template<typename InputIterator1,typename InputIterator2>
-Pair<InputIterator1,InputIterator2> mismatch(InputIterator1 beg1,InputIterator1 end1, InputIterator2 beg2)
+Pair<InputIterator1,InputIterator2> mismatch(InputIterator1 begin1,InputIterator1 end1, InputIterator2 begin2)
 {
-    while(beg1 != end1)
+    while(begin1 != end1)
     {
-        if(*beg1 == *beg2)
+        if(*begin1 == *begin2)
         {
-            ++beg1;
-            ++beg2;
+            ++begin1;
+            ++begin2;
         }
     }
-    return make_pair(beg1,beg2);
+    return make_pair(begin1,begin2);
 }
 template<typename InputIterator1,typename InputIterator2,typename BinaryPred>
-Pair<InputIterator1,InputIterator2> mismatch(InputIterator1 beg1,InputIterator1 end1,
-                                             InputIterator2 beg2,BinaryPred pred)
+Pair<InputIterator1,InputIterator2> mismatch(InputIterator1 begin1,InputIterator1 end1,
+                                             InputIterator2 begin2,BinaryPred pred)
 {
-    while(beg1 != end1)
+    while(begin1 != end1)
     {
-        if(pred(*beg1,*beg2))
+        if(pred(*begin1,*begin2))
         {
-            ++beg1;
-            ++beg2;
+            ++begin1;
+            ++begin2;
         }
     }
-    return make_pair(beg1,beg2);
+    return make_pair(begin1,begin2);
 }
 //equal 要求序列2长度不小于序列1,否则发生未定义行为
 template<typename InputIterator1,typename InputIterator2>
-bool equal(InputIterator1 beg1,InputIterator1 end1, InputIterator2 beg2)
+bool equal(InputIterator1 begin1,InputIterator1 end1, InputIterator2 begin2)
 {
-    while(beg1 != end1)
+    while(begin1 != end1)
     {
-        if(*beg1 == *beg2)
+        if(*begin1 == *begin2)
         {
-            ++beg1;
-            ++beg2;
+            ++begin1;
+            ++begin2;
         }
         else
         {
@@ -79,14 +79,14 @@ bool equal(InputIterator1 beg1,InputIterator1 end1, InputIterator2 beg2)
     return true;
 }
 template<typename InputIterator1,typename InputIterator2,typename BinaryPred>
-bool equal(InputIterator1 beg1,InputIterator1 end1, InputIterator2 beg2,BinaryPred pred)
+bool equal(InputIterator1 begin1,InputIterator1 end1, InputIterator2 begin2,BinaryPred pred)
 {
-    while(beg1 != end1)
+    while(begin1 != end1)
     {
-        if(pred(*beg1,*end1))
+        if(pred(*begin1,*end1))
         {
-            ++beg1;
-            ++beg2;
+            ++begin1;
+            ++begin2;
         }
         else
         {
@@ -96,7 +96,7 @@ bool equal(InputIterator1 beg1,InputIterator1 end1, InputIterator2 beg2,BinaryPr
     return true;
 }
 
-//fill(beg,end,val)
+//fill(begin,end,val)
 template<typename ForwardIterator,typename T>
 void fill(ForwardIterator first,ForwardIterator last,const T& val)
 {
@@ -111,7 +111,7 @@ inline void fill(wchar_t* first, wchar_t* last, const wchar_t& value)
 {
      memset(first, static_cast<unsigned char>(value),(last - first)*sizeof(wchar_t));
 }
-//fill_n(beg,n,val)
+//fill_n(begin,n,val)
 template<typename ForwardIterator,typename T>
 void fill_n(ForwardIterator pos,size_t n,const T& value)
 {
@@ -129,25 +129,25 @@ inline void fill_n(wchar_t *pos, const size_t n, const wchar_t &value)
 //distance
 template<typename InputIterator>
 typename IteratorTraits<InputIterator>::difference_type
-distance_aux(InputIterator beg,InputIterator end,input_iterator_tag)
+distance_aux(InputIterator begin,InputIterator end,input_iterator_tag)
 {
     typedef typename IteratorTraits<InputIterator>::difference_type difference_type;
     difference_type dis = 0;
-    while(beg++ != end) ++dis;
+    while(begin++ != end) ++dis;
     return dis;
 }
 template<typename RandomAccessIterator>
 typename IteratorTraits<RandomAccessIterator>::difference_type
-distance_aux(RandomAccessIterator beg,RandomAccessIterator end,random_access_iterator_tag)
+distance_aux(RandomAccessIterator begin,RandomAccessIterator end,random_access_iterator_tag)
 {
-    return end - beg;
+    return end - begin;
 }
 template<typename Iterator>
 typename IteratorTraits<Iterator>::difference_type
-distance(Iterator beg,Iterator end)
+distance(Iterator begin,Iterator end)
 {
     typedef typename IteratorTraits<Iterator>::iterator_category iterator_category;
-    return distance_aux(beg,end,iterator_category());
+    return distance_aux(begin,end,iterator_category());
 
 }
 
@@ -194,124 +194,124 @@ void advance(Iterator& iter,Distance n)
 //1.简单查找算法
 // find
 template<typename InputIterator,typename T>
-inline InputIterator find(InputIterator beg,InputIterator end,const T& val)
+inline InputIterator find(InputIterator begin,InputIterator end,const T& val)
 {
-    while (beg != end && *beg != val) ++beg;
-    return beg;
+    while (begin != end && *begin != val) ++begin;
+    return begin;
 }
 //find_if
 template<typename InputIterator,typename Func>
-inline InputIterator find_if(InputIterator beg, InputIterator end, Func func)
+inline InputIterator find_if(InputIterator begin, InputIterator end, Func func)
 {
-    while(beg != end && !(func(*beg))) ++beg;
-    return beg;
+    while(begin != end && !(func(*begin))) ++begin;
+    return begin;
 }
 //find_if_not
 template<typename InputIterator,typename Func>
-inline InputIterator find_if_not(InputIterator beg, InputIterator end, Func func)
+inline InputIterator find_if_not(InputIterator begin, InputIterator end, Func func)
 {
-    while(beg != end && func(*beg)) ++beg;
-    return beg;
+    while(begin != end && func(*begin)) ++begin;
+    return begin;
 }
 //count
 template<typename InputIterator,typename T>
 inline typename IteratorTraits<InputIterator>::difference_type
-count(InputIterator beg,InputIterator end,const T& val)
+count(InputIterator begin,InputIterator end,const T& val)
 {
     typedef typename IteratorTraits<InputIterator>::difference_type Diff;
     Diff quantity = 0;
-    while (beg != end)
+    while (begin != end)
     {
-        if(*beg == val)
+        if(*begin == val)
              ++quantity;
-        ++beg;
+        ++begin;
     }
     return quantity;
 }
 //count_if
 template<typename InputIterator,typename Func>
 inline typename IteratorTraits<InputIterator>::difference_type
-count_if(InputIterator beg,InputIterator end,Func func)
+count_if(InputIterator begin,InputIterator end,Func func)
 {
     typedef typename IteratorTraits<InputIterator>::difference_type Diff;
     Diff quantity = 0;
-    while (beg != end)
+    while (begin != end)
     {
-        if(func(*beg))
+        if(func(*begin))
              ++quantity;
-        ++beg;
+        ++begin;
     }
     return quantity;
 }
 //all_of
 template<typename InputIterator,typename UnaryPred>
-inline bool all_of(InputIterator beg,InputIterator end,UnaryPred pred)
+inline bool all_of(InputIterator begin,InputIterator end,UnaryPred pred)
 {
-    while(beg != end)
+    while(begin != end)
     {
-        if(!pred(*beg))
+        if(!pred(*begin))
             return false;
-        ++beg;
+        ++begin;
     }
     return true;
 }
 // none_of
 template<typename InputIterator,typename UnaryPred>
-inline bool none_of(InputIterator beg,InputIterator end,UnaryPred pred)
+inline bool none_of(InputIterator begin,InputIterator end,UnaryPred pred)
 {
-    while(beg != end)
+    while(begin != end)
     {
-        if(pred(*beg))
+        if(pred(*begin))
             return false;
-        ++beg;
+        ++begin;
     }
     return true;
 }
 //any_of
 template<typename InputIterator,typename UnaryPred>
-inline bool any_of(InputIterator beg,InputIterator end,UnaryPred pred)
+inline bool any_of(InputIterator begin,InputIterator end,UnaryPred pred)
 {
-    while(beg != end)
+    while(begin != end)
     {
-        if(pred(*beg))
+        if(pred(*begin))
             return true;
-        ++beg;
+        ++begin;
     }
     return false;
 }
 //2.查找重复值算法
 //adjacent_find
 template<typename ForwardItertor>
-inline ForwardItertor adjacent_find(ForwardItertor beg, ForwardItertor end)
+inline ForwardItertor adjacent_find(ForwardItertor begin, ForwardItertor end)
 {
-    if(beg == end) return end;
-    ForwardItertor curr = beg;
+    if(begin == end) return end;
+    ForwardItertor curr = begin;
     while(++curr != end)
     {
-        if(*beg == *curr)
-            return beg;
-        ++beg;
+        if(*begin == *curr)
+            return begin;
+        ++begin;
     }
     return end;
 }
 template<typename ForwardIterator,typename BinaryPred>
-inline ForwardIterator adjacent_find(ForwardIterator beg, ForwardIterator end,BinaryPred pred)
+inline ForwardIterator adjacent_find(ForwardIterator begin, ForwardIterator end,BinaryPred pred)
 {
-    if(beg == end) return end;
-    ForwardIterator curr = beg;
+    if(begin == end) return end;
+    ForwardIterator curr = begin;
     while(++curr != end)
     {
-        if(pred(beg,curr))
-            return beg;
-        ++beg;
+        if(pred(begin,curr))
+            return begin;
+        ++begin;
     }
     return end;
 }
 //search_n
 template<typename ForwardItertor,typename T>
-ForwardItertor search_n(ForwardItertor beg, ForwardItertor end,size_t nobjs,const T& val)
+ForwardItertor search_n(ForwardItertor begin, ForwardItertor end,size_t nobjs,const T& val)
 {
-    ForwardItertor iter = find(beg,end,val);
+    ForwardItertor iter = find(begin,end,val);
     size_t n = nobjs;
     while(n > 0 && iter != end)
     {
@@ -330,9 +330,9 @@ ForwardItertor search_n(ForwardItertor beg, ForwardItertor end,size_t nobjs,cons
     return iter;
 }
 template<typename ForwardItertor,typename T,typename BinaryPred>
-ForwardItertor search_n(ForwardItertor beg, ForwardItertor end,size_t nobjs,const T& val,BinaryPred pred)
+ForwardItertor search_n(ForwardItertor begin, ForwardItertor end,size_t nobjs,const T& val,BinaryPred pred)
 {
-    ForwardItertor iter = beg;
+    ForwardItertor iter = begin;
     while(iter != end)
     {
         if(pred(val,*iter))
@@ -393,16 +393,16 @@ InputIterator find_first_of(InputIterator begin1,InputIterator end1,
 }
 //search
 template<typename ForwardIterator1,typename ForwardIterator2>
-ForwardIterator1 search(ForwardIterator1 beg1,ForwardIterator1 end1,
-                       ForwardIterator2 beg2,ForwardIterator2 end2)
+ForwardIterator1 search(ForwardIterator1 begin1,ForwardIterator1 end1,
+                       ForwardIterator2 begin2,ForwardIterator2 end2)
 {
     typedef typename IteratorTraits<ForwardIterator1>::difference_type Distance1;
     typedef typename IteratorTraits<ForwardIterator2>::difference_type Distance2;
 
-    ForwardIterator1 iter1 = beg1;
-    ForwardIterator2 iter2 = beg2;
-    Distance1 dist1 = TinySTL::distance(beg1,end1);//序列1长度
-    Distance2 dist2 = TinySTL::distance(beg2,end2);//序列2长度
+    ForwardIterator1 iter1 = begin1;
+    ForwardIterator2 iter2 = begin2;
+    Distance1 dist1 = TinySTL::distance(begin1,end1);//序列1长度
+    Distance2 dist2 = TinySTL::distance(begin2,end2);//序列2长度
     if(dist1 < dist2) //序列1长度小于序列2
     {
         return end1;
@@ -417,8 +417,8 @@ ForwardIterator1 search(ForwardIterator1 beg1,ForwardIterator1 end1,
         }
         else
         {
-            iter1 = ++beg1;
-            iter2 = beg2;
+            iter1 = ++begin1;
+            iter2 = begin2;
             --dist1;
             if(dist1 < dist2)////序列1剩余长度小于序列2
             {
@@ -426,20 +426,20 @@ ForwardIterator1 search(ForwardIterator1 beg1,ForwardIterator1 end1,
             }
         }
     }
-    return beg1;//found
+    return begin1;//found
 }
 template<typename ForwardIterator1,typename ForwardIterator2,typename BinaryPred>
-ForwardIterator1 search(ForwardIterator1 beg1,ForwardIterator1 end1,
-                       ForwardIterator2 beg2,ForwardIterator2 end2,
+ForwardIterator1 search(ForwardIterator1 begin1,ForwardIterator1 end1,
+                       ForwardIterator2 begin2,ForwardIterator2 end2,
                         BinaryPred pred)
 {
     typedef typename IteratorTraits<ForwardIterator1>::difference_type Distance1;
     typedef typename IteratorTraits<ForwardIterator2>::difference_type Distance2;
 
-    ForwardIterator1 iter1 = beg1;
-    ForwardIterator2 iter2 = beg2;
-    Distance1 dist1 = TinySTL::distance(beg1,end1);//序列1长度
-    Distance2 dist2 = TinySTL::distance(beg2,end2);//序列2长度
+    ForwardIterator1 iter1 = begin1;
+    ForwardIterator2 iter2 = begin2;
+    Distance1 dist1 = TinySTL::distance(begin1,end1);//序列1长度
+    Distance2 dist2 = TinySTL::distance(begin2,end2);//序列2长度
     if(dist1 < dist2) //序列1长度小于序列2
     {
         return end1;
@@ -454,8 +454,8 @@ ForwardIterator1 search(ForwardIterator1 beg1,ForwardIterator1 end1,
         }
         else
         {
-            iter1 = ++beg1;
-            iter2 = beg2;
+            iter1 = ++begin1;
+            iter2 = begin2;
             --dist1;
             if(dist1 < dist2)////序列1剩余长度小于序列2
             {
@@ -463,9 +463,134 @@ ForwardIterator1 search(ForwardIterator1 beg1,ForwardIterator1 end1,
             }
         }
     }
-    return beg1;//found
+    return begin1;//found
 }
-//find_end,使用search和反向迭代器实现
+//find_end
+//TODO:使用search和反向迭代器实现 find_end
 
+/*******************************************************************************************************/
+/**********************二分搜索算法,要求序列元素已经有序(只实现使用“<”比较的版本)****************************/
+//lower_bound 返回指向第一个大于等于给定值的迭代器，不存在则返回end
+template<typename RandomAccessIterator,typename T>
+RandomAccessIterator lower_bound_aux(RandomAccessIterator begin,RandomAccessIterator end,
+                                    const T& val,random_access_iterator_tag)
+{
+    typedef IteratorTraits<RandomAccessIterator>::difference_type Distance;
+    Distance length= end - begin;
+    Distance half = length / 2;
+    RandomAccessIterator middle =  begin + half;
+    while(length > 0)
+    {
+        if(*middle < val)
+        {
+            begin = ++middle;
+            length = length - half -1;
+        }
+        else
+        {
+            length = half;
+        }
+        half = length / 2;
+        middle = begin + half;
+    }
+    return begin;
+}
+template<typename ForwardIterator,typename T>
+ForwardIterator lower_bound_aux(ForwardIterator begin,ForwardIterator end,
+                                    const T& val,forward_iterator_tag)
+{
+    typedef IteratorTraits<ForwardIterator>::difference_type Distance;
+    Distance length= distance(begin,end);
+    Distance half = length / 2;
+    ForwardIterator middle =  begin;
+    advance(middle,half);
+    while(length > 0)
+    {
+        if(*middle < val)
+        {
+            begin = ++middle;
+            length = length - half -1;
+        }
+        else
+        {
+            length = half;
+        }
+        half = length / 2;
+        advance(middle,half);
+    }
+    return begin;
+}
+template<typename Iterator,typename T>
+Iterator lower_bound(Iterator begin,Iterator end,
+                                    const T& val)
+{
+    typedef typename IteratorTraits<Iterator>::iterator_category iterator_category;
+    return lower_bound_aux(begin,end,val,iterator_category);
+}
+//upper_bound 返回指向第一个大于给定值的迭代器，不存在则返回end
+template<typename RandomAccessIterator,typename T>
+RandomAccessIterator upper_bound_aux(RandomAccessIterator begin,RandomAccessIterator end,
+                                    const T& val,random_access_iterator_tag)
+{
+    typedef IteratorTraits<RandomAccessIterator>::difference_type Distance;
+    Distance length= end - begin;
+    Distance half = length / 2;
+    RandomAccessIterator middle =  begin + half;
+    while(length > 0)
+    {
+        if(val < *middle)
+        {
+            length = half;
+        }
+        else
+        {
+            begin = ++middle;
+            length = length - half -1;
+        }
+        half = length / 2;
+        middle = begin + half;
+    }
+    return begin;
+}
+template<typename ForwardIterator,typename T>
+ForwardIterator upper_bound_aux(ForwardIterator begin,ForwardIterator end,
+                                    const T& val,forward_iterator_tag)
+{
+    typedef IteratorTraits<ForwardIterator>::difference_type Distance;
+    Distance length= distance(begin,end);
+    Distance half = length / 2;
+    ForwardIterator middle =  begin;
+    advance(middle,half);
+    while(length > 0)
+    {
+        if(val < *middle)
+        {
+            length = half;
+        }
+        else
+        {
+            begin = ++middle;
+            length = length - half -1;
+        }
+        half = length / 2;
+        advance(middle,half);
+    }
+    return begin;
+}
+template<typename Iterator,typename T>
+Iterator upper_bound(Iterator begin,Iterator end,
+                                    const T& val)
+{
+    typedef typename IteratorTraits<Iterator>::iterator_category iterator_category;
+    return upper_bound_aux(begin,end,val,iterator_category);
+}
+
+//binary_search
+template<typename ForwardIterator,typename T>
+bool binary_search(ForwardIterator begin,ForwardIterator end,const T& val)
+{
+    ForwardIterator iter = lower_bound(begin,end,val);
+    return (iter != end) && !(val < *iter);
+}
 }//namesapce TinySTL
 #endif // ALGORITHM_H
