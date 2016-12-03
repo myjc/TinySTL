@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cassert>
 #include"Iterator.h"
+#include"Utility.h"
 namespace TinySTL {
 
 // min max
@@ -21,6 +22,78 @@ template <typename T> T min(const T& v1, const T& v2)
 template<typename T,typename CompareFunc> T min(const T& v1, const T& v2,CompareFunc func)
 {
     return (func(v1,v2)) ? v1 :v2;
+}
+//for_each
+template<typename InputIterator, typename UnaryPred>
+void for_each(InputIterator beg, InputIterator end, UnaryPred pred)
+{
+    while(beg++ != end)
+    {
+        pred(*beg);
+    }
+}
+//mismatch 要求序列2长度不小于序列1,否则发生未定义行为
+template<typename InputIterator1,typename InputIterator2>
+Pair<InputIterator1,InputIterator2> mismatch(InputIterator1 beg1,InputIterator1 end1, InputIterator2 beg2)
+{
+    while(beg1 != end1)
+    {
+        if(*beg1 == *beg2)
+        {
+            ++beg1;
+            ++beg2;
+        }
+    }
+    return make_pair(beg1,beg2);
+}
+template<typename InputIterator1,typename InputIterator2,typename BinaryPred>
+Pair<InputIterator1,InputIterator2> mismatch(InputIterator1 beg1,InputIterator1 end1,
+                                             InputIterator2 beg2,BinaryPred pred)
+{
+    while(beg1 != end1)
+    {
+        if(pred(*beg1,*beg2))
+        {
+            ++beg1;
+            ++beg2;
+        }
+    }
+    return make_pair(beg1,beg2);
+}
+//equal 要求序列2长度不小于序列1,否则发生未定义行为
+template<typename InputIterator1,typename InputIterator2>
+bool equal(InputIterator1 beg1,InputIterator1 end1, InputIterator2 beg2)
+{
+    while(beg1 != end1)
+    {
+        if(*beg1 == *beg2)
+        {
+            ++beg1;
+            ++beg2;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return true;
+}
+template<typename InputIterator1,typename InputIterator2,typename BinaryPred>
+bool equal(InputIterator1 beg1,InputIterator1 end1, InputIterator2 beg2,BinaryPred pred)
+{
+    while(beg1 != end1)
+    {
+        if(pred(*beg1,*end1))
+        {
+            ++beg1;
+            ++beg2;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 //fill(beg,end,val)
@@ -318,19 +391,19 @@ InputIterator find_first_of(InputIterator begin1,InputIterator end1,
     }
     return end1;
 }
-template<typename ForwardIterator>
 //search
-ForwardIterator search(ForwardIterator beg1,ForwardIterator end1,
-                       ForwardIterator beg2,ForwardIterator end2)
+template<typename ForwardIterator1,typename ForwardIterator2>
+ForwardIterator1 search(ForwardIterator1 beg1,ForwardIterator1 end1,
+                       ForwardIterator2 beg2,ForwardIterator2 end2)
 {
-    typedef typename IteratorTraits<ForwardIterator>::difference_type Distance;
+    typedef typename IteratorTraits<ForwardIterator1>::difference_type Distance1;
+    typedef typename IteratorTraits<ForwardIterator2>::difference_type Distance2;
 
-    ForwardIterator res = find(beg1,end1,*beg2);
-    ForwardIterator iter1 = res;
-    ForwardIterator iter2 = beg2;
-    Distance dist1 = TinySTL::distance(res,end1);//序列1剩余长度
-    Distance dist2 = TinySTL::distance(beg2,end2);//序列2长度
-    if(dist1 < dist2) //序列1剩余长度小于序列2
+    ForwardIterator1 iter1 = beg1;
+    ForwardIterator2 iter2 = beg2;
+    Distance1 dist1 = TinySTL::distance(beg1,end1);//序列1长度
+    Distance2 dist2 = TinySTL::distance(beg2,end2);//序列2长度
+    if(dist1 < dist2) //序列1长度小于序列2
     {
         return end1;
     }
@@ -344,18 +417,55 @@ ForwardIterator search(ForwardIterator beg1,ForwardIterator end1,
         }
         else
         {
-            res = find(iter1,end1,*beg2);
-            iter1 = res;
+            iter1 = ++beg1;
             iter2 = beg2;
-            dist1 =TinySTL::distance(res,end1);
+            --dist1;
             if(dist1 < dist2)////序列1剩余长度小于序列2
             {
                 return end1;
             }
         }
     }
-    return res;//found
+    return beg1;//found
 }
-//find_end
+template<typename ForwardIterator1,typename ForwardIterator2,typename BinaryPred>
+ForwardIterator1 search(ForwardIterator1 beg1,ForwardIterator1 end1,
+                       ForwardIterator2 beg2,ForwardIterator2 end2,
+                        BinaryPred pred)
+{
+    typedef typename IteratorTraits<ForwardIterator1>::difference_type Distance1;
+    typedef typename IteratorTraits<ForwardIterator2>::difference_type Distance2;
+
+    ForwardIterator1 iter1 = beg1;
+    ForwardIterator2 iter2 = beg2;
+    Distance1 dist1 = TinySTL::distance(beg1,end1);//序列1长度
+    Distance2 dist2 = TinySTL::distance(beg2,end2);//序列2长度
+    if(dist1 < dist2) //序列1长度小于序列2
+    {
+        return end1;
+    }
+    while(iter2 != end2)
+    {
+
+        if(pred(*iter1,*iter2))
+        {
+            ++iter1;
+            ++iter2;
+        }
+        else
+        {
+            iter1 = ++beg1;
+            iter2 = beg2;
+            --dist1;
+            if(dist1 < dist2)////序列1剩余长度小于序列2
+            {
+                return end1;
+            }
+        }
+    }
+    return beg1;//found
+}
+//find_end,使用search和反向迭代器实现
+
 }//namesapce TinySTL
 #endif // ALGORITHM_H
