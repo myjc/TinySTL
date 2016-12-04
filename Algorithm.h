@@ -95,6 +95,8 @@ bool equal(InputIterator1 begin1,InputIterator1 end1, InputIterator2 begin2,Bina
     }
     return true;
 }
+/*****************************************************************************************/
+/*********************************写容器的算法*********************************************/
 
 //fill(begin,end,val)
 template<typename ForwardIterator,typename T>
@@ -126,6 +128,67 @@ inline void fill_n(wchar_t *pos, const size_t n, const wchar_t &value)
 {
     memset(pos,static_cast<unsigned char>(value),n*sizeof(wchar_t));
 }
+//generate
+template<typename OutputIterator,typename GenerateFunc>
+void generate(OutputIterator begin,OutputIterator end,GenerateFunc func)
+{
+    while(begin != end)
+    {
+        *begin = func();
+        ++begin;
+    }
+}
+//generate_n
+template<typename OutputIterator,typename Count,typename GenerateFunc>
+OutputIterator generate_n(OutputIterator begin,Count n,GenerateFunc func)
+{
+    while(n > 0)
+    {
+        *begin = func();
+        ++begin;
+        --n;
+    }
+    return begin;
+}
+// move: c++11,对每个元素调用move，移动到dest开始的序列
+template<typename InputIterator,typename OutputIterator>
+OutputIterator move(InputIterator begin,InputIterator end,OutputIterator dest)
+{
+    while(begin != end)
+    {
+        *dest = TinySTL::move(*begin);
+        ++begin;
+        ++dest;
+    }
+}
+//transform
+template<typename ForwardIterator1,typename ForwardIterator2,typename UnaryPred>
+ForwardIterator2 transform(ForwardIterator1 begin,ForwardIterator1 end,ForwardIterator2 dest,UnaryPred func)
+{
+    while(begin != end)
+    {
+        *dest = func(*begin);
+        ++dest;
+        ++begin;
+    }
+    return dest;
+}
+template<typename ForwardIterator1,typename ForwardIterator2,typename ForwardIterator3,typename BinaryPred>
+ForwardIterator3 transform(ForwardIterator1 begin1,ForwardIterator1 end1,
+                           ForwardIterator2 begin2,//该版本要求序列2长度不小于序列1
+                           ForwardIterator3 dest,BinaryPred func)
+{
+    while(begin1 != end1)
+    {
+        *dest = func(*begin1,*begin2);
+        ++dest;
+        ++begin1;
+        ++begin2;
+    }
+    return dest;
+}
+/*****************************************************************************************************/
+/**************************迭代器辅助******************************************************************/
 //distance
 template<typename InputIterator>
 typename IteratorTraits<InputIterator>::difference_type
