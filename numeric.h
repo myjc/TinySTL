@@ -39,6 +39,7 @@ void iota(InputIterator begin, InputIterator end, T val)
 template<typename InputIterator,typename OutputIterator>
 OutputIterator partial_sum(InputIterator begin, InputIterator end, OutputIterator dest)
 {
+    if(begin == end) return dest;
     typedef typename IteratorTraits<InputIterator>::value_type value_type;
     value_type val = *begin;
     while(begin != end)
@@ -53,6 +54,7 @@ OutputIterator partial_sum(InputIterator begin, InputIterator end, OutputIterato
 template<typename InputIterator,typename OutputIterator,typename BinaryPred>
 OutputIterator partial_sum(InputIterator begin, InputIterator end, OutputIterator dest,BinaryPred pred)
 {
+    if(begin == end) return dest;
     typedef typename IteratorTraits<InputIterator>::value_type value_type;
     value_type val = *begin;
     while(begin != end)
@@ -64,6 +66,39 @@ OutputIterator partial_sum(InputIterator begin, InputIterator end, OutputIterato
     }
     return dest;
 }
+//adjacent_differance
+template<typename InputIterator,typename OutputIterator>
+OutputIterator adjacent_differance(InputIterator begin, InputIterator end, OutputIterator dest)
+{
+    if(begin == end) return dest;
+    *dest = *begin;
+    InputIterator curr = begin;
+    ++curr;
+    while(curr != end)
+    {
+        *(++dest) = *curr - *begin;
+        ++begin;
+        ++curr;
+    }
+    return ++dest;
+}
+template<typename InputIterator,typename OutputIterator,typename BinaryPred>
+OutputIterator adjacent_differance(InputIterator begin, InputIterator end, OutputIterator dest,BinaryPred pred)
+{
+    if(begin == end) return dest;
+    *dest = *begin;
+    InputIterator curr = begin;
+    ++curr;
+    while(curr != end)
+    {
+        *(++dest) = pred(*curr,*begin);
+        ++begin;
+        ++curr;
+    }
+    return ++dest;
+}
+
+
 }
 
 #endif // TINYSTL_NUMERIC_H
