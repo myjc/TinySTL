@@ -37,7 +37,7 @@ void iota(InputIterator begin, InputIterator end, T val)
 }
 //partial_sum
 template<typename InputIterator,typename OutputIterator>
-void partial_sum(InputIterator begin, InputIterator end, OutputIterator dest)
+OutputIterator partial_sum(InputIterator begin, InputIterator end, OutputIterator dest)
 {
     typedef typename IteratorTraits<InputIterator>::value_type value_type;
     value_type val = *begin;
@@ -45,11 +45,13 @@ void partial_sum(InputIterator begin, InputIterator end, OutputIterator dest)
     {
         *dest = val;
         ++begin;
+        ++dest;
         val += *begin;
     }
+    return dest;
 }
 template<typename InputIterator,typename OutputIterator,typename BinaryPred>
-void partial_sum(InputIterator begin, InputIterator end, OutputIterator dest,BinaryPred pred)
+OutputIterator partial_sum(InputIterator begin, InputIterator end, OutputIterator dest,BinaryPred pred)
 {
     typedef typename IteratorTraits<InputIterator>::value_type value_type;
     value_type val = *begin;
@@ -57,8 +59,10 @@ void partial_sum(InputIterator begin, InputIterator end, OutputIterator dest,Bin
     {
         *dest = val;
         ++begin;
+        ++dest;
         val = pred(val,*end);
     }
+    return dest;
 }
 }
 
