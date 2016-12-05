@@ -26,7 +26,8 @@ HEADERS += \
     Algorithm.h \
     Memory.h \
     Utility.h \
-    Functional.h
+    Functional.h \
+    numeric.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
