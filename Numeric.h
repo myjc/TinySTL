@@ -83,7 +83,8 @@ OutputIterator adjacent_differance(InputIterator begin, InputIterator end, Outpu
     return ++dest;
 }
 template<typename InputIterator,typename OutputIterator,typename BinaryPred>
-OutputIterator adjacent_differance(InputIterator begin, InputIterator end, OutputIterator dest,BinaryPred pred)
+OutputIterator adjacent_differance(InputIterator begin, InputIterator end,
+                                   OutputIterator dest,BinaryPred pred)
 {
     if(begin == end) return dest;
     *dest = *begin;
@@ -97,8 +98,33 @@ OutputIterator adjacent_differance(InputIterator begin, InputIterator end, Outpu
     }
     return ++dest;
 }
-
-
+//inner_product
+template<typename InputIterator1,typename InputIterator2,typename T>
+T inner_product (InputIterator1 begin1,InputIterator1 end1,
+                 InputIterator2 begin2,
+                 T init)
+{
+    while(begin1 != end1)
+    {
+        init = init + (*begin1) * (*begin2);
+        ++begin1;
+        ++begin2;
+    }
+    return init;
+}
+template<typename InputIterator1,typename InoutIterator2,typename T,typename PlusFunc,typename MultiFunc>
+T inner_product (InputIterator1 begin1,InputIterator1 end1,
+                 InoutIterator2 begin2,T init,
+                 PlusFunc plus,MultiFunc multi)
+{
+    while(begin1 != end1)
+    {
+        init = plus(init,multi(*begin1,*begin2));
+        ++begin1;
+        ++begin2;
+    }
+    return init;
+}
 }
 
 #endif // TINYSTL_NUMERIC_H
