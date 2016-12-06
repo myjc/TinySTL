@@ -160,10 +160,25 @@ OutputIterator move(InputIterator begin,InputIterator end,OutputIterator dest)
         ++begin;
         ++dest;
     }
+    return dest;
+}
+//move_backward
+template<typename BidirectionalIterator1,typename BidirectionalIterator2>
+BidirectionalIterator2 move_backward(BidirectionalIterator1 begin,BidirectionalIterator1 end,
+                                     BidirectionalIterator2 dest)
+{
+    if(end == begin)
+        return dest;
+    while(end != begin)
+    {
+        *--dest = TinySTL::move(*--end);
+    }
+    *--dest = TinySTL::move(*--end);
+    return dest;
 }
 //transform
-template<typename ForwardIterator1,typename ForwardIterator2,typename UnaryPred>
-ForwardIterator2 transform(ForwardIterator1 begin,ForwardIterator1 end,ForwardIterator2 dest,UnaryPred func)
+template<typename InputIterator,typename OutputIterator,typename UnaryPred>
+OutputIterator transform(InputIterator begin,InputIterator end,OutputIterator dest,UnaryPred func)
 {
     while(begin != end)
     {
@@ -173,10 +188,10 @@ ForwardIterator2 transform(ForwardIterator1 begin,ForwardIterator1 end,ForwardIt
     }
     return dest;
 }
-template<typename ForwardIterator1,typename ForwardIterator2,typename ForwardIterator3,typename BinaryPred>
-ForwardIterator3 transform(ForwardIterator1 begin1,ForwardIterator1 end1,
-                           ForwardIterator2 begin2,//该版本要求序列2长度不小于序列1
-                           ForwardIterator3 dest,BinaryPred func)
+template<typename InputIterator1,typename InputIterator2,typename OutputIterator,typename BinaryPred>
+OutputIterator transform(InputIterator1 begin1,InputIterator1 end1,
+                           InputIterator2 begin2,//该版本要求序列2长度不小于序列1
+                           OutputIterator dest,BinaryPred func)
 {
     while(begin1 != end1)
     {
@@ -187,6 +202,106 @@ ForwardIterator3 transform(ForwardIterator1 begin1,ForwardIterator1 end1,
     }
     return dest;
 }
+//replace O(N)
+template<typename ForwardIterator,typename T>
+void replace(ForwardIterator begin,ForwardIterator end,
+                            const T& old_val,const T& new_val)
+{
+    for(; begin != end; ++begin)
+    {
+        if(*begin == old_val)
+           *begin = new_val;
+    }
+}
+//replace_copy O(N)
+template<typename InputIterator,typename OutputIterator,typename T>
+OutputIterator replace_copy(InputIterator begin,InputIterator end,OutputIterator dest,
+                            const T& old_val,const T& new_val)
+{
+    for(; begin != end; ++begin,++dest)
+    {
+        if(*begin == old_val)
+            *dest = new_val;
+        else
+            *dest = *begin;
+    }
+    return dest;
+}
+//replace_if O(N)
+template<typename ForwardIterator,typename UnaryPred,typename T>
+void replace_if(ForwardIterator begin,ForwardIterator end,
+                            UnaryPred pred,const T& new_val)
+{
+    for(; begin != end; ++begin)
+    {
+        if(pred(*begin))
+           *begin = new_val;
+    }
+}
+//replace_copy_if O(N)
+template<typename InputIterator,typename OutputIterator,typename UnaryPred,typename T>
+OutputIterator replace_copy_if(InputIterator begin,InputIterator end,OutputIterator dest,
+                            UnaryPred pred,const T& new_val)
+{
+    for(; begin != end; ++begin,++dest)
+    {
+        if(pred(*begin))
+            *dest = new_val;
+        else
+            *dest = *begin;
+    }
+    return dest;
+}
+//iter_swap
+template<typename ForwardIterator1,typename ForwardIterator2>
+void iter_swap(ForwardIterator1 iter1,ForwardIterator2 iter2)
+{
+    typename IteratorTraits<ForwardIterator1>::value_type tmp = *iter1;
+    *iter1 = *iter2;
+    *iter2 = tmp;
+}
+//swap_ranges
+template<typename ForwardIterator1,typename ForwardIterator2>
+ForwardIterator2 swap_ranges(ForwardIterator1 begin1,ForwardIterator1 end1,ForwardIterator2 begin2)
+{
+    while (begin1 != end1) {
+        TinySTL::iter_swap(begin1,begin2);
+        ++begin1;
+        ++begin2;
+    }
+    return begin2;
+}
+//merge 要求两个区间都是有序的
+template<typename InputIterator1,typename InputIterator2,typename OutputIterator,typename BinaryPred>
+OutputIterator merge(InputIterator1 begin1,InputIterator1 end1,
+                     InputIterator2 begin2,InputIterator2 end2,
+                     OutputIterator dest)
+{
+    while(begin1 != end1 && begin2 != end2)
+    {
+        if(*begin1 < *begin2)
+        {
+            *dest = *begin1;
+            ++begin1;
+        }
+        else
+        {
+            *dest = *begin2;
+            ++begin2;
+        }
+        ++dest;
+    }
+    //return copy(begin1,end1,copy(begin2,end2,dest);
+}
+template<typename InputIterator1,typename InputIterator2,typename OutputIterator,typename BinaryPred>
+OutputIterator merge(InputIterator1 begin1,InputIterator1 end1,
+                     InputIterator2 begin2,InputIterator2 end2,
+                     OutputIterator dest,BinaryPred func)
+{
+    //TODO
+    return dest;
+}
+
 /*****************************************************************************************************/
 /**************************迭代器辅助******************************************************************/
 //distance
