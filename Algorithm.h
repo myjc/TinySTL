@@ -25,12 +25,14 @@ template<typename T,typename CompareFunc> T min(const T& v1, const T& v2,Compare
 }
 //for_each
 template<typename InputIterator, typename UnaryPred>
-void for_each(InputIterator begin, InputIterator end, UnaryPred pred)
+UnaryPred for_each(InputIterator begin, InputIterator end, UnaryPred pred)
 {
-    while(begin++ != end)
+    while(begin != end)
     {
         pred(*begin);
+        ++begin;
     }
+    return pred;
 }
 //mismatch 要求序列2长度不小于序列1,否则发生未定义行为
 template<typename InputIterator1,typename InputIterator2>
@@ -270,6 +272,34 @@ ForwardIterator2 swap_ranges(ForwardIterator1 begin1,ForwardIterator1 end1,Forwa
         ++begin2;
     }
     return begin2;
+}
+//copy
+namespace
+{
+template<typename InputIterator,typename OutputIterator>
+OutputIterator copy_aux(InputIterator begin,InputIterator end,
+                              OutputIterator dest,input_iterator_tag)
+{
+    while(begin != end)
+    {
+        *dest = *begin;
+        ++dest;
+        ++begin;
+    }
+    return begin;
+}
+template<typename RandomAccessIterator,typename OutputIterator>
+OutputIterator copy_aux(RandomAccessIterator begin,RandomAccessIterator end,
+                              OutputIterator dest,random_access_iterator_tag)
+{
+    while(begin != end)
+    {
+        *dest = *begin;
+        ++dest;
+        ++begin;
+    }
+    return begin;
+}
 }
 //merge 要求两个区间都是有序的
 template<typename InputIterator1,typename InputIterator2,typename OutputIterator,typename BinaryPred>
