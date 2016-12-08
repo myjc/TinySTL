@@ -276,8 +276,32 @@ ForwardIterator2 swap_ranges(ForwardIterator1 begin1,ForwardIterator1 end1,Forwa
 //copy
 namespace
 {
+template<typename RandomAccessIterator,typename OutputIterator>
+OutputIterator _copy_rand(RandomAccessIterator begin,RandomAccessIterator end,
+                              OutputIterator dest)
+{
+    typedef typename IteratorTraits<RandomAccessIterator>::difference_type Distance;
+    for(Distance n = end - begin; n != 0;--n)
+    {
+        *dest = *begin;
+        ++dest;
+        ++begin;
+    }
+    return dest;
+}
+template<typename T>
+T* _copy_argumentPtr(const T* begin,const T* end,T* dest,_true_type)
+{
+    memmove(dest,begin,end-begin);
+    return dest+(end-begin);
+}
+template<typename T>
+T* _copy_argumentPtr(const T* begin,const T* end,T* dest,_false_type)
+{
+    return _copy_rand(begin,end,dest);
+}
 template<typename InputIterator,typename OutputIterator>
-OutputIterator copy_aux(InputIterator begin,InputIterator end,
+OutputIterator _copy_aux(InputIterator begin,InputIterator end,
                               OutputIterator dest,input_iterator_tag)
 {
     while(begin != end)
@@ -286,19 +310,52 @@ OutputIterator copy_aux(InputIterator begin,InputIterator end,
         ++dest;
         ++begin;
     }
-    return begin;
+    return dest;
 }
 template<typename RandomAccessIterator,typename OutputIterator>
-OutputIterator copy_aux(RandomAccessIterator begin,RandomAccessIterator end,
+OutputIterator _copy_aux(RandomAccessIterator begin,RandomAccessIterator end,
                               OutputIterator dest,random_access_iterator_tag)
 {
-    while(begin != end)
+    return _copy_rand(begin,end,dest);
+}
+template<typename InputIterator,typename OutputIterator>
+struct _copy_dispatch
+{
+    OutputIterator operator()(InputIterator begin,InputIterator end,OutputIterator dest)
     {
-        *dest = *begin;
-        ++dest;
-        ++begin;
+        return _copy_aux(begin,end,dest,iterator_category(begin));
     }
-    return begin;
+};
+template<typename T>
+struct _copy_dispatch<const T*,T*>
+{
+
+    T* operator()(const T* begin, const T* end,T*dest)
+    {
+        typedef typename _type_traits<T>::has_trivial_assignment_operator Type;
+        return _copy_argumentPtr(begin,end,dest,Type());
+    }
+};
+template<typename T>
+struct _copy_dispatch<T*,T*>
+{
+    T* operator()(const T* begin, const T* end,T*dest)
+    {
+        typedef typename _type_traits<T>::has_trivial_assignment_operator Type;
+        return _copy_argumentPtr(begin,end,dest,Type());
+    }
+};
+inline char* copy( char* begin,char* end, char* dest)
+{
+    size_t length = end- begin;
+    memmove(dest,begin,length);
+    return dest + length;
+}
+inline wchar_t* copy( wchar_t* begin,wchar_t* end, wchar_t* dest)
+{
+    size_t length = end- begin;
+    memmove(dest,begin,length);
+    return dest + length;
 }
 }
 //merge 要求两个区间都是有序的
