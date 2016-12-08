@@ -345,6 +345,12 @@ struct _copy_dispatch<T*,T*>
         return _copy_argumentPtr(begin,end,dest,Type());
     }
 };
+template<typename InputIterator,typename OutputIterator>
+OutputIterator copy(InputIterator begin,InputIterator end,OutputIterator dest)
+{
+    return _copy_dispatch<InputIterator,OutputIterator>()(begin,end,dest);
+}
+
 inline char* copy( char* begin,char* end, char* dest)
 {
     size_t length = end- begin;
@@ -378,15 +384,28 @@ OutputIterator merge(InputIterator1 begin1,InputIterator1 end1,
         }
         ++dest;
     }
-    //return copy(begin1,end1,copy(begin2,end2,dest);
+    return copy(begin1,end1,copy(begin2,end2,dest));
 }
 template<typename InputIterator1,typename InputIterator2,typename OutputIterator,typename BinaryPred>
 OutputIterator merge(InputIterator1 begin1,InputIterator1 end1,
                      InputIterator2 begin2,InputIterator2 end2,
-                     OutputIterator dest,BinaryPred func)
+                     OutputIterator dest,BinaryPred pred)
 {
-    //TODO
-    return dest;
+    while(begin1 != end1 && begin2 != end2)
+    {
+        if(pred(*begin1,*begin2))
+        {
+            *dest = *begin1;
+            ++begin1;
+        }
+        else
+        {
+            *dest = *begin2;
+            ++begin2;
+        }
+        ++dest;
+    }
+    return copy(begin1,end1,copy(begin2,end2,dest));
 }
 
 /*****************************************************************************************************/
@@ -394,7 +413,7 @@ OutputIterator merge(InputIterator1 begin1,InputIterator1 end1,
 //distance
 template<typename InputIterator>
 typename IteratorTraits<InputIterator>::difference_type
-distance_aux(InputIterator begin,InputIterator end,input_iterator_tag)
+_distance_aux(InputIterator begin,InputIterator end,input_iterator_tag)
 {
     typedef typename IteratorTraits<InputIterator>::difference_type difference_type;
     difference_type dis = 0;
@@ -403,7 +422,7 @@ distance_aux(InputIterator begin,InputIterator end,input_iterator_tag)
 }
 template<typename RandomAccessIterator>
 typename IteratorTraits<RandomAccessIterator>::difference_type
-distance_aux(RandomAccessIterator begin,RandomAccessIterator end,random_access_iterator_tag)
+_distance_aux(RandomAccessIterator begin,RandomAccessIterator end,random_access_iterator_tag)
 {
     return end - begin;
 }
@@ -412,7 +431,7 @@ typename IteratorTraits<Iterator>::difference_type
 distance(Iterator begin,Iterator end)
 {
     typedef typename IteratorTraits<Iterator>::iterator_category iterator_category;
-    return distance_aux(begin,end,iterator_category());
+    return _distance_aux(begin,end,iterator_category());
 
 }
 
