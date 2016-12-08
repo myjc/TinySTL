@@ -274,8 +274,6 @@ ForwardIterator2 swap_ranges(ForwardIterator1 begin1,ForwardIterator1 end1,Forwa
     return begin2;
 }
 //copy
-namespace
-{
 template<typename RandomAccessIterator,typename OutputIterator>
 OutputIterator _copy_rand(RandomAccessIterator begin,RandomAccessIterator end,
                               OutputIterator dest)
@@ -363,7 +361,7 @@ inline wchar_t* copy( wchar_t* begin,wchar_t* end, wchar_t* dest)
     memmove(dest,begin,length);
     return dest + length;
 }
-}
+
 //merge 要求两个区间都是有序的
 template<typename InputIterator1,typename InputIterator2,typename OutputIterator,typename BinaryPred>
 OutputIterator merge(InputIterator1 begin1,InputIterator1 end1,
