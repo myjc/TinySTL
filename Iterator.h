@@ -77,6 +77,52 @@ inline typename IteratorTraits<Iterator>::value_type* value_type(const Iterator&
 {
     return static_cast<typename IteratorTraits<Iterator>::value_type*>(0);
 }
+//reverse_iterator
+template<typename Iterator>
+class ReverseIterator
+{
+public:
+    typedef ReverseIterator<Iterator> self;
+    typedef typename IteratorTraits<Iterator>::difference_type      difference_type;
+    typedef typename IteratorTraits<Iterator>::iterator_category    iterator_category;
+    typedef typename IteratorTraits<Iterator>::pointer              pointer;
+    typedef typename IteratorTraits<Iterator>::reference            reference;
+    typedef typename IteratorTraits<Iterator>::value_type           value_type;
+protected:
+    Iterator iterator_;
+public:
+    reference operator* ()
+    {
+        Iterator tmp = iterator_;
+        return *(--tmp);
+    }
+    pointer operator-> ()
+    {
+        return &this->operator *();
+    }
+    self& operator++()
+    {
+        --iterator_;
+        return *this;
+    }
+    self operator++(int)
+    {
+        self tmp = *this;
+        --iterator_;
+        return tmp;
+    }
+    self& operator--()
+    {
+        ++iterator_;
+        return *this;
+    }
+    self operator--(int)
+    {
+        self tmp = *this;
+        ++iterator_;
+        return tmp;
+    }
 
+};
 }
 #endif // ITERATOR_H
