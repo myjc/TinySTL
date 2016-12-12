@@ -83,46 +83,60 @@ class ReverseIterator
 {
 public:
     typedef ReverseIterator<Iterator> self;
+    typedef Iterator iterator_type;
     typedef typename IteratorTraits<Iterator>::difference_type      difference_type;
     typedef typename IteratorTraits<Iterator>::iterator_category    iterator_category;
     typedef typename IteratorTraits<Iterator>::pointer              pointer;
     typedef typename IteratorTraits<Iterator>::reference            reference;
     typedef typename IteratorTraits<Iterator>::value_type           value_type;
 protected:
-    Iterator iterator_;
+    Iterator current_;
 public:
+    ReverseIterator() = default;
+    explicit ReverseIterator(Iterator iter):current_(iter){}
+    ReverseIterator(const self& iter):current_(iter.current_){}
+    ReverseIterator& operator=(const self& iter)
+    {
+        current_ = iter.current_;
+    }
+    ~ReverseIterator() = default;
+public:
+    iterator_type base(){ return current_ ;}
+
+public:
+
     reference operator* ()
     {
-        Iterator tmp = iterator_;
+        Iterator tmp = current_;
         return *(--tmp);
     }
     pointer operator-> ()
     {
-        return &this->operator *();
+        return &(this->operator *());
     }
     self& operator++()
     {
-        --iterator_;
+        --current_;
         return *this;
     }
     self operator++(int)
     {
         self tmp = *this;
-        --iterator_;
+        --current_;
         return tmp;
     }
     self& operator--()
     {
-        ++iterator_;
+        ++current_;
         return *this;
     }
     self operator--(int)
     {
         self tmp = *this;
-        ++iterator_;
+        ++current_;
         return tmp;
     }
 
 };
 }
-#endif // ITERATOR_H
+#endif // TINYSTL_TERATOR_H
