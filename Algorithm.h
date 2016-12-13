@@ -874,5 +874,32 @@ bool binary_search(ForwardIterator begin,ForwardIterator end,const T& val)
     ForwardIterator iter = lower_bound(begin,end,val);
     return (iter != end) && !(val < *iter);
 }
+/********************************************************************************/
+/******heap相关算法,heap通常以vector作为底层实现,算法要求RandomAccessIterator*******/
+/************************************************************************* ******/
+//push_heap:要求最后一个元素是新插入底层容器的元素，
+//对最后一个元素进行“上滤（percolate up）”操作以完成Push
+template<typename RandomAccessIterator,typename Distance,typename ElementType>
+inline void _push_heap_aux(RandomAccessIterator begin,Distance slot_index,
+                           Distance top_index,ElementType value)
+{
+    Distance parent_index = (slot_index - 1)/2;
+    while(slot_index > top_index && *(begin + parent_index)< value)
+    {
+        *(begin + slot_index) = *(begin + parent_index);
+        slot_index = parent_index;
+        parent_index = (slot_index -1)/2;
+    }
+    *(begin + slot_index )= value;
+}
+
+template<typename RandomAccessIterator>
+inline void push_heap(RandomAccessIterator begin,RandomAccessIterator end)
+{
+    typedef typename IteratorTraits<RandomAccessIterator>::value_type       ElementType;
+    typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
+    _push_heap_aux(begin,Distance(end - begin -1),Distance(0),ElementType(*(end -1)));
+
+}
 }//namesapce TinySTL
 #endif // ALGORITHM_H
