@@ -757,7 +757,7 @@ template<typename RandomAccessIterator,typename T>
 RandomAccessIterator lower_bound_aux(RandomAccessIterator begin,RandomAccessIterator end,
                                     const T& val,random_access_iterator_tag)
 {
-    typedef IteratorTraits<RandomAccessIterator>::difference_type Distance;
+    typedef typename IteratorTraits<RandomAccessIterator>::difference_type Distance;
     Distance length= end - begin;
     Distance half = length / 2;
     RandomAccessIterator middle =  begin + half;
@@ -781,7 +781,7 @@ template<typename ForwardIterator,typename T>
 ForwardIterator lower_bound_aux(ForwardIterator begin,ForwardIterator end,
                                     const T& val,forward_iterator_tag)
 {
-    typedef IteratorTraits<ForwardIterator>::difference_type Distance;
+    typedef typename IteratorTraits<ForwardIterator>::difference_type Distance;
     Distance length= distance(begin,end);
     Distance half = length / 2;
     ForwardIterator middle =  begin;
@@ -807,14 +807,14 @@ Iterator lower_bound(Iterator begin,Iterator end,
                                     const T& val)
 {
     typedef typename IteratorTraits<Iterator>::iterator_category iterator_category;
-    return lower_bound_aux(begin,end,val,iterator_category);
+    return lower_bound_aux(begin,end,val,iterator_category());
 }
 //upper_bound 返回指向第一个大于给定值的迭代器，不存在则返回end
 template<typename RandomAccessIterator,typename T>
 RandomAccessIterator upper_bound_aux(RandomAccessIterator begin,RandomAccessIterator end,
                                     const T& val,random_access_iterator_tag)
 {
-    typedef IteratorTraits<RandomAccessIterator>::difference_type Distance;
+    typedef typename IteratorTraits<RandomAccessIterator>::difference_type Distance;
     Distance length= end - begin;
     Distance half = length / 2;
     RandomAccessIterator middle =  begin + half;
@@ -838,7 +838,7 @@ template<typename ForwardIterator,typename T>
 ForwardIterator upper_bound_aux(ForwardIterator begin,ForwardIterator end,
                                     const T& val,forward_iterator_tag)
 {
-    typedef IteratorTraits<ForwardIterator>::difference_type Distance;
+    typedef typename IteratorTraits<ForwardIterator>::difference_type Distance;
     Distance length= distance(begin,end);
     Distance half = length / 2;
     ForwardIterator middle =  begin;
@@ -864,7 +864,7 @@ Iterator upper_bound(Iterator begin,Iterator end,
                                     const T& val)
 {
     typedef typename IteratorTraits<Iterator>::iterator_category iterator_category;
-    return upper_bound_aux(begin,end,val,iterator_category);
+    return upper_bound_aux(begin,end,val,iterator_category());
 }
 
 //binary_search
@@ -877,10 +877,10 @@ bool binary_search(ForwardIterator begin,ForwardIterator end,const T& val)
 /********************************************************************************/
 /******heap相关算法,heap通常以vector作为底层实现,算法要求RandomAccessIterator*******/
 /************************************************************************* ******/
-//push_heap:要求最后一个元素是新插入底层容器的元素，
+//push_heap:要求底层容器的最后一个元素是新插入的元素，
 //对最后一个元素进行“上滤（percolate up）”操作以完成Push
 template<typename RandomAccessIterator,typename Distance,typename ElementType>
-inline void _push_heap_aux(RandomAccessIterator begin,Distance slot_index,
+inline void _percolate_up(RandomAccessIterator begin,Distance slot_index,
                            Distance top_index,ElementType value)
 {
     Distance parent_index = (slot_index - 1)/2;
@@ -898,8 +898,73 @@ inline void push_heap(RandomAccessIterator begin,RandomAccessIterator end)
 {
     typedef typename IteratorTraits<RandomAccessIterator>::value_type       ElementType;
     typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
-    _push_heap_aux(begin,Distance(end - begin -1),Distance(0),ElementType(*(end -1)));
+    _percolate_up(begin,Distance(end - begin -1),Distance(0),ElementType(*(end -1)));
 
+}
+//pop_heap : 对最大元素执行下滤操作,使其位于底层容器尾部,未真正删除
+template<typename RandomAccessIterator,typename Distance,typename ElementType>
+inline void _percolate_down(RandomAccessIterator begin,Distance last_element_index,
+                          Distance aim_index,ElementType aim_value)
+{
+    Distance current_index = aim_index;
+    while(current_index < last_element_index)
+    {
+        Distance left_son = 2 * current_index + 1;
+        Distance right_son = left_son + 1;
+        Distance bigger_son = current_index;
+        if(left_son < last_element_index) // if(leftson < last) there must be a right_son
+        {
+            bigger_son = *(begin + left_son) > *(begin + right_son) ? left_son : right_son;
+        }
+        else if(left_son == last_element_index)// left_son is the last, no right_son
+        {
+            bigger_son = last_element_index;
+        }
+        else
+        {
+            break;      //current node does not have son node
+        }
+        if(*(begin+current_index) < *(begin+bigger_son))
+        {
+            *(begin + current_index) = *(begin + bigger_son);
+            *(begin + bigger_son) = aim_value;
+        }
+        current_index = bigger_son;
+    }
+}
+template<typename RandomAccessIterator>
+inline void pop_heap(RandomAccessIterator begin,RandomAccessIterator end)
+{
+    typedef typename IteratorTraits<RandomAccessIterator>::value_type       ElementType;
+    typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
+    TinySTL::iter_swap(begin,end-1);
+    _percolate_down(begin,Distance(end - begin -2),Distance(0),ElementType(*begin));
+
+}
+//sort_heap:由于pop_heap每次将最大元素置于底层容器尾端而未真正删除，所以只要连续调用pop_heap便可将底层容器排序，
+//注：排序后将不再满足堆序性质。
+template<typename RandomAccessIterator>
+void sort_heap(RandomAccessIterator begin,RandomAccessIterator end)
+{
+    while(end != begin)
+    {
+        pop_heap(begin,end);
+        --end;
+    }
+}
+//make_heap
+template<typename RandomAccessIterator>
+inline void make_heap(RandomAccessIterator begin,RandomAccessIterator end)
+{
+    typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
+    Distance length = end - begin;
+    if(length < 2) return;
+    Distance need_percolate_down = (length -2)/2;
+    do
+    {
+        _percolate_down(begin,length-1,need_percolate_down,*(begin+need_percolate_down));
+        --need_percolate_down;
+    }while(need_percolate_down >= 0);
 }
 }//namesapce TinySTL
 #endif // ALGORITHM_H
