@@ -990,9 +990,9 @@ bool is_heap(RandomAccessIterator begin,RandomAccessIterator end)
 /***********************************************************************************************/
 /*                                   划分与排序算法                                             */
 /***********************************************************************************************/
-//is_partioned :所有满足pred的元素在不满足pred的元素之前，返回true，否则返回flase，空序列返回true O(N)
+//is_partitioned :所有满足pred的元素在不满足pred的元素之前，返回true，否则返回flase，空序列返回true O(N)
 template<typename InputIterator,typename UnaryPred>
-bool is_partioned(InputIterator begin,InputIterator end,UnaryPred pred)
+bool is_partitioned(InputIterator begin,InputIterator end,UnaryPred pred)
 {
     while(begin != end)
     {
@@ -1011,6 +1011,25 @@ bool is_partioned(InputIterator begin,InputIterator end,UnaryPred pred)
         ++begin;
     }
     return true;
+}
+//partition_copy:所有满足pred的元素copy到dest1,不满足pred的元素copy到dest2,O(N)
+template<typename InputIterator, typename OutputIterator1, typename OutputIterator2,typename UnaryPred>
+Pair<OutputIterator1,OutputIterator2> partition_copy(InputIterator begin, InputIterator end,
+                                                     OutputIterator1 dest1,OutputIterator2 dest2,
+                                                     UnaryPred pred)
+{
+    while (begin != end)
+    {
+        if(pred(*begin))
+        {
+            *dest1++ = *begin++;
+        }
+        else
+        {
+            *dest2++ = *begin++;
+        }
+    }
+    return make_pair(dest1,dest2);
 }
 }//namesapce TinySTL
 #endif // ALGORITHM_H
