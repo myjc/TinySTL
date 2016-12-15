@@ -991,8 +991,8 @@ bool is_heap(RandomAccessIterator begin,RandomAccessIterator end)
 /*                                   划分与排序算法                                             */
 /***********************************************************************************************/
 //is_partitioned :所有满足pred的元素在不满足pred的元素之前，返回true，否则返回flase，空序列返回true O(N)
-template<typename InputIterator,typename UnaryPred>
-bool is_partitioned(InputIterator begin,InputIterator end,UnaryPred pred)
+template<typename BidirectionalIterator,typename UnaryPred>
+bool is_partitioned(BidirectionalIterator begin,BidirectionalIterator end,UnaryPred pred)
 {
     while(begin != end)
     {
@@ -1013,8 +1013,8 @@ bool is_partitioned(InputIterator begin,InputIterator end,UnaryPred pred)
     return true;
 }
 //partition_copy:所有满足pred的元素copy到dest1,不满足pred的元素copy到dest2,O(N)
-template<typename InputIterator, typename OutputIterator1, typename OutputIterator2,typename UnaryPred>
-Pair<OutputIterator1,OutputIterator2> partition_copy(InputIterator begin, InputIterator end,
+template<typename BidirectionalIterator, typename OutputIterator1, typename OutputIterator2,typename UnaryPred>
+Pair<OutputIterator1,OutputIterator2> partition_copy(BidirectionalIterator begin, BidirectionalIterator end,
                                                      OutputIterator1 dest1,OutputIterator2 dest2,
                                                      UnaryPred pred)
 {
@@ -1030,6 +1030,63 @@ Pair<OutputIterator1,OutputIterator2> partition_copy(InputIterator begin, InputI
         }
     }
     return make_pair(dest1,dest2);
+}
+//partition_point:返回第一个不满足pred的元素或end。
+//要求输入的序列已划分，即 is_partitioned(begin,end,pred)返回true
+template<typename BidirectionalIterator,typename UnaryPred>
+BidirectionalIterator partition_point(BidirectionalIterator begin,BidirectionalIterator end,UnaryPred pred)
+{
+    while(begin != end)
+    {
+        if(!pred(*begin)) return begin;
+        ++begin;
+    }
+    return begin;
+}
+//partition:
+template<typename BidirectionalIterator,typename UnaryPred>
+BidirectionalIterator partition(BidirectionalIterator begin,BidirectionalIterator end,UnaryPred pred)
+{
+    while (true)
+    {
+        while (true)
+        {
+            if(begin == end)
+                return begin;
+            if(pred(*begin))
+                ++begin;
+            else
+                break;
+        }
+        --end;
+        while(true)
+        {
+            if(begin == end)
+                return begin;
+            if(!pred(*end))
+                --end;
+            else
+                break;
+        }
+        iter_swap(begin,end);
+        ++begin;
+    }
+}
+//remove
+template<typename ForwardIterator,typename T>
+ForwardIterator remove(ForwardIterator begin,ForwardIterator end,const T& val)
+{
+    ForwardIterator quick = begin;
+    ForwardIterator slow = begin;
+    while (quick != end)
+    {
+        if(*quick != val)
+        {
+            *slow = *quick;
+            ++slow;
+        }
+        ++quick;
+    }
 }
 }//namesapce TinySTL
 #endif // ALGORITHM_H
