@@ -1072,21 +1072,32 @@ BidirectionalIterator partition(BidirectionalIterator begin,BidirectionalIterato
         ++begin;
     }
 }
+//stable_partion:需利用额外缓冲区
+
+//remove_copy
+template<typename ForwardIterator,typename OutputIterator,typename T>
+OutputIterator remove_copy(ForwardIterator begin,ForwardIterator end,
+                           OutputIterator dest,const T& val)
+{
+    for(;begin != end;++begin)
+    {
+        if(*begin != val)
+        {
+            *dest = *begin;
+            ++dest;
+        }
+    }
+    return dest;
+}
+
 //remove
 template<typename ForwardIterator,typename T>
 ForwardIterator remove(ForwardIterator begin,ForwardIterator end,const T& val)
 {
-    ForwardIterator quick = begin;
-    ForwardIterator slow = begin;
-    while (quick != end)
-    {
-        if(*quick != val)
-        {
-            *slow = *quick;
-            ++slow;
-        }
-        ++quick;
-    }
+    ForwardIterator iter = TinySTL::find(begin,end,val);
+    ForwardIterator dest = iter;
+    if( iter == end) return iter;
+    return TinySTL::remove_copy(++iter,end,dest,val);
 }
 }//namesapce TinySTL
 #endif // ALGORITHM_H
