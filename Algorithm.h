@@ -987,6 +987,30 @@ bool is_heap(RandomAccessIterator begin,RandomAccessIterator end)
         return false;
     return true;
 }
-
+/***********************************************************************************************/
+/*                                   划分与排序算法                                             */
+/***********************************************************************************************/
+//is_partioned :所有满足pred的元素在不满足pred的元素之前，返回true，否则返回flase，空序列返回true O(N)
+template<typename InputIterator,typename UnaryPred>
+bool is_partioned(InputIterator begin,InputIterator end,UnaryPred pred)
+{
+    while(begin != end)
+    {
+        if(pred(*begin))
+        {
+            ++begin;
+        }
+        else break; //到达第一个不满足要求的元素
+    }
+    while(begin != end)
+    {
+        if(pred(*begin))//后面再次出现满足要求的元素，则说明未划分好，返回false
+        {
+            return false;
+        }
+        ++begin;
+    }
+    return true;
+}
 }//namesapce TinySTL
 #endif // ALGORITHM_H
