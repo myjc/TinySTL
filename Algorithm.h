@@ -1073,7 +1073,9 @@ BidirectionalIterator partition(BidirectionalIterator begin,BidirectionalIterato
     }
 }
 //stable_partion:需利用额外缓冲区
-
+/**********************************************************************************************/
+/*                                    通用重排操作                                             */
+/**********************************************************************************************/
 //remove_copy
 template<typename ForwardIterator,typename OutputIterator,typename T>
 OutputIterator remove_copy(ForwardIterator begin,ForwardIterator end,
@@ -1089,7 +1091,21 @@ OutputIterator remove_copy(ForwardIterator begin,ForwardIterator end,
     }
     return dest;
 }
-
+//remove_copy_if
+template<typename ForwardIterator,typename OutputIterator,typename UnaryPred>
+OutputIterator remove_copy_if(ForwardIterator begin,ForwardIterator end,
+                           OutputIterator dest,UnaryPred pred)
+{
+    for(;begin != end;++begin)
+    {
+        if(pred(*begin))
+        {
+            *dest = *begin;
+            ++dest;
+        }
+    }
+    return dest;
+}
 //remove
 template<typename ForwardIterator,typename T>
 ForwardIterator remove(ForwardIterator begin,ForwardIterator end,const T& val)
@@ -1099,5 +1115,15 @@ ForwardIterator remove(ForwardIterator begin,ForwardIterator end,const T& val)
     if( iter == end) return iter;
     return TinySTL::remove_copy(++iter,end,dest,val);
 }
+//remove_if
+template<typename ForwardIterator,typename UnaryPred>
+ForwardIterator remove_if(ForwardIterator begin,ForwardIterator end,UnaryPred pred)
+{
+    ForwardIterator iter = TinySTL::find_if(begin,end,pred);
+    ForwardIterator dest = iter;
+    if( iter == end) return iter;
+    return TinySTL::remove_copy_if(++iter,end,dest,pred);
+}
+//
 }//namesapce TinySTL
 #endif // ALGORITHM_H
