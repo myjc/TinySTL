@@ -942,7 +942,7 @@ inline void pop_heap(RandomAccessIterator begin,RandomAccessIterator end)
 
 }
 //sort_heap:由于pop_heap每次将最大元素置于底层容器尾端而未真正删除，所以只要连续调用pop_heap便可将底层容器排序，
-//注：排序后将不再满足堆序性质。
+//排序后将不再满足堆序性质。
 template<typename RandomAccessIterator>
 void sort_heap(RandomAccessIterator begin,RandomAccessIterator end)
 {
@@ -954,7 +954,7 @@ void sort_heap(RandomAccessIterator begin,RandomAccessIterator end)
 }
 //make_heap
 template<typename RandomAccessIterator>
-inline void make_heap(RandomAccessIterator begin,RandomAccessIterator end)
+void make_heap(RandomAccessIterator begin,RandomAccessIterator end)
 {
     typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
     Distance length = end - begin;
@@ -966,5 +966,27 @@ inline void make_heap(RandomAccessIterator begin,RandomAccessIterator end)
         --need_percolate_down;
     }while(need_percolate_down >= 0);
 }
+//is_heap
+template<typename RandomAccessIterator>
+bool is_heap(RandomAccessIterator begin,RandomAccessIterator end)
+{
+    typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
+    Distance index = 0;
+    RandomAccessIterator cur = begin;
+    RandomAccessIterator left_son = begin + (2 *index +1);
+    const Distance last_element_index = end - begin-1;
+    while (left_son <last_element_index)
+    {
+        if(*left_son > *cur || *(left_son+1) > *cur)
+            return false;
+        ++cur;
+        ++index;
+        left_son = begin + (2 *index +1);
+    }
+    if(left_son == last_element_index && *left_son > *cur)
+        return false;
+    return true;
+}
+
 }//namesapce TinySTL
 #endif // ALGORITHM_H
