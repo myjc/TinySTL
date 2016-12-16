@@ -1073,6 +1073,35 @@ BidirectionalIterator partition(BidirectionalIterator begin,BidirectionalIterato
     }
 }
 //stable_partion:需利用额外缓冲区
+//is_sorted
+template<typename RandomAccessIterator>
+bool is_sorted(RandomAccessIterator begin,RandomAccessIterator end)
+{
+    if(begin == end) return true;
+    RandomAccessIterator curr = begin;
+    ++curr;
+    while(curr != end)
+    {
+        if(*curr < *begin)
+            return false;
+        ++curr;
+    }
+    return true;
+}
+template<typename RandomIterator,typename CompareFunc>
+bool is_sorted(RandomIterator begin, RandomIterator end, CompareFunc fun)
+{
+    if(begin == end) return true;
+    RandomIterator curr = begin;
+    ++curr;
+    while(curr != end)
+    {
+        if(fun(*curr,*end))
+            return false;
+        ++curr;
+    }
+    return true;
+}
 /**********************************************************************************************/
 /*                                    通用重排操作                                             */
 /**********************************************************************************************/
@@ -1124,6 +1153,30 @@ ForwardIterator remove_if(ForwardIterator begin,ForwardIterator end,UnaryPred pr
     if( iter == end) return iter;
     return TinySTL::remove_copy_if(++iter,end,dest,pred);
 }
-//
+//unique_copy
+template<typename ForwardIterator1,typename ForwardIterator2>
+ForwardIterator2 unique_copy(ForwardIterator1 begin,ForwardIterator1 end,ForwardIterator2 dest)
+{
+    if(begin == end) return dest;
+    *dest = *begin;
+    ++begin;
+    while(begin != end)
+    {
+        if(*begin != *dest)
+        {
+            ++dest;
+            *dest = *begin;
+        }
+        ++begin;
+    }
+    return ++dest;
+}
+//unique
+template<typename ForwardIterator>
+ForwardIterator unique(ForwardIterator begin,ForwardIterator end)
+{
+    if(begin == end) return begin;
+    return unique_copy(begin,end,begin);
+}
 }//namesapce TinySTL
 #endif // ALGORITHM_H
