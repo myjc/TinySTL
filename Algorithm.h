@@ -1171,12 +1171,47 @@ ForwardIterator2 unique_copy(ForwardIterator1 begin,ForwardIterator1 end,Forward
     }
     return ++dest;
 }
+
+//unique_copy_if
+template<typename ForwardIterator1,typename ForwardIterator2,typename BinaryPred>
+ForwardIterator2 unique_copy_if(ForwardIterator1 begin,ForwardIterator1 end,
+                                ForwardIterator2 dest,BinaryPred pred)
+{
+    if(begin == end) return dest;
+    *dest = *begin;
+    ++begin;
+    while(begin != end)
+    {
+        if(pred(*begin,*dest))
+        {
+            ++dest;
+            *dest = *begin;
+        }
+        ++begin;
+    }
+    return ++dest;
+}
 //unique
 template<typename ForwardIterator>
 ForwardIterator unique(ForwardIterator begin,ForwardIterator end)
 {
     if(begin == end) return begin;
+    begin = TinySTL::adjacent_find(begin,end);
     return unique_copy(begin,end,begin);
 }
+template<typename ForwardIterator,typename BinaryPred>
+ForwardIterator unique(ForwardIterator begin,ForwardIterator end,BinaryPred pred)
+{
+    if(begin == end) return begin;
+    begin = TinySTL::adjacent_find(begin,end,pred);
+    return unique_copy_if(begin,end,begin,pred);
+}
+//rotate_copy
+template<typename InputIterator,typename OutputIterator>
+OutputIterator rotate_copy(InputIterator begin,InputIterator mid,InputIterator end,OutputIterator dest)
+{
+    return TinySTL::copy(begin,mid,TinySTL::copy(mid,end,dest));
+}
+//rotate
 }//namesapce TinySTL
 #endif // ALGORITHM_H
