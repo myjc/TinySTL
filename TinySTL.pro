@@ -28,7 +28,9 @@ HEADERS += \
     Utility.h \
     Functional.h \
     Numeric.h \
-    String.h
+    String.h \
+    Test/permutation_test.h \
+    Test/screen_show.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
