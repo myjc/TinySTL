@@ -1206,6 +1206,39 @@ ForwardIterator unique(ForwardIterator begin,ForwardIterator end,BinaryPred pred
     begin = TinySTL::adjacent_find(begin,end,pred);
     return unique_copy_if(begin,end,begin,pred);
 }
+//reverse
+template<typename BidirectionalIterator>
+void _reverse_aux(BidirectionalIterator begin,BidirectionalIterator end,bidirectional_iterator_tag)
+{
+    while(begin != end)
+    {
+        if(begin = --end)
+            return;
+        else
+        {
+            iter_swap(begin,end);
+            ++begin;
+        }
+    }
+}
+template<typename RandomAccessIterator>
+void _reverse_aux(RandomAccessIterator begin,RandomAccessIterator end,random_access_iterator_tag)
+{
+    while(begin < end)
+    {
+        --end;
+        iter_swap(begin,end);
+        ++begin;
+    }
+}
+//reverse
+template <typename BidirectionalIterator>
+void reverse(BidirectionalIterator begin, BidirectionalIterator end)
+{
+    typedef typename IteratorTraits<BidirectionalIterator>::iterator_category category;
+    _reverse_aux(begin,end,category());
+}
+
 //rotate_copy
 template<typename InputIterator,typename OutputIterator>
 OutputIterator rotate_copy(InputIterator begin,InputIterator mid,InputIterator end,OutputIterator dest)
@@ -1213,5 +1246,42 @@ OutputIterator rotate_copy(InputIterator begin,InputIterator mid,InputIterator e
     return TinySTL::copy(begin,mid,TinySTL::copy(mid,end,dest));
 }
 //rotate
+template<typename BidirectionalIterator>
+void _rotate_aux(BidirectionalIterator begin,BidirectionalIterator mid,
+                 BidirectionalIterator end,bidirectional_iterator_tag)
+{
+    TinySTL::reverse(begin,mid);
+    TinySTL::reverse(mid,end);
+    TinySTL::reverse(begin,end);
+}
+template<typename ForwardIterator>
+void _rotate_aux(ForwardIterator begin,ForwardIterator mid,
+                 ForwardIterator end,forward_iterator_tag)
+{
+    ForwardIterator iter = mid; //由调用该函数的rotate保证初始时begin != mid,mid != end
+    while(true)
+    {
+            iter_swap(begin,iter);
+            ++begin;
+            ++iter;
+        if(begin == mid)//前段结束
+        {
+            if(iter == end) //后段同时结束
+                return;
+            mid = iter;
+        }
+        else if( iter == end)//只有后段结束
+        {
+            iter = mid;
+        }
+    }
+}
+template<typename ForwardIterator>
+void rotate(ForwardIterator begin,ForwardIterator mid,ForwardIterator end)
+{
+    if(begin == mid || mid == end) return;
+    typedef typename IteratorTraits<ForwardIterator>::iterator_category category;
+    return _rotate_aux(begin,mid,end,category());
+}
 }//namesapce TinySTL
 #endif // ALGORITHM_H
