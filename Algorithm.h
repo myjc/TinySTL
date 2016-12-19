@@ -4,6 +4,7 @@
 #include <cassert>
 #include"Iterator.h"
 #include"Utility.h"
+#include"Functional.h"
 namespace TinySTL {
 
 // min max
@@ -1282,6 +1283,82 @@ void rotate(ForwardIterator begin,ForwardIterator mid,ForwardIterator end)
     if(begin == mid || mid == end) return;
     typedef typename IteratorTraits<ForwardIterator>::iterator_category category;
     return _rotate_aux(begin,mid,end,category());
+}
+//next_permutation:将序列置为下一个排列，并返回true。
+//已经是最后一个（最大）排列则返回false，并将序列置为第一个（最小）排列
+template<typename BidirectionalIterator,typename BinaryPred>
+bool next_permutation(BidirectionalIterator begin,BidirectionalIterator end,BinaryPred pred)
+{
+    if(begin == end) return false; // empty
+    BidirectionalIterator iter1 = begin;
+    if(++iter1 == end) return false; // only one element
+    iter1 = end;
+    --iter1;
+    for(;iter1 != begin;)
+    {
+        BidirectionalIterator iter2 = iter1;
+        --iter1;
+        if(pred(*iter1,*iter2))
+        {
+            BidirectionalIterator j = end;
+            while(!pred(*iter1, *--j));// j point to the first (backward) elementbigger than *iter1
+            iter_swap(iter1,j);
+            reverse(iter2,end);
+            return true;
+        }
+        if(iter1 == begin)
+        {
+            reverse(begin,end);
+            return false;
+        }
+    }
+}
+template<typename BidirectionalIterator>
+bool next_permutation(BidirectionalIterator begin,BidirectionalIterator end)
+{
+    typedef typename IteratorTraits<BidirectionalIterator>::value_type value_type;
+    return next_permutation(begin,end,Less<value_type>());
+
+    //use lambda expression
+    //return next_permutation(begin,end,[](value_type i1,value_type i2){return i1 < i2;});
+}
+//pre_permutation:将序列置为上一个排列，并返回true。
+//已经是第一个（最小）排列,则返回false，并将序列置为最后一个（最大）排列
+template<typename BidirectionalIterator,typename BinaryPred>
+bool pre_permutation(BidirectionalIterator begin,BidirectionalIterator end,BinaryPred pred)
+{
+    if(begin == end) return false; // empty
+    BidirectionalIterator iter1 = begin;
+    if(++iter1 == end) return false; // only one element
+    iter1 = end;
+    --iter1;
+    for(;iter1 != begin;)
+    {
+        BidirectionalIterator iter2 = iter1;
+        --iter1;
+        if(!pred(*iter1,*iter2))
+        {
+            BidirectionalIterator j = end;
+            while(pred(*iter1, *--j));// j point to the first (backward) element less than *iter1
+            iter_swap(iter1,j);
+            reverse(iter2,end);
+            return true;
+        }
+        if(iter1 == begin)
+        {
+            reverse(begin,end);
+            return false;
+        }
+    }
+}
+template<typename BidirectionalIterator>
+bool pre_permutation(BidirectionalIterator begin,BidirectionalIterator end)
+{
+    typedef typename IteratorTraits<BidirectionalIterator>::value_type value_type;
+    return pre_permutation(begin,end,Less<value_type>());
+
+    //use lambda expression
+    //return pre_permutation(begin,end,[](value_type i1,value_type i2){return i1 < i2;});
 }
 }//namesapce TinySTL
 #endif // ALGORITHM_H
