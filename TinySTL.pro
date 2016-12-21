@@ -30,7 +30,8 @@ HEADERS += \
     Numeric.h \
     String.h \
     Test/permutation_test.h \
-    Test/screen_show.h
+    Test/screen_show.h \
+    Test/sort_test.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
