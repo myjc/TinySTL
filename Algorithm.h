@@ -5,6 +5,7 @@
 #include"Iterator.h"
 #include"Utility.h"
 #include"Functional.h"
+#include <iostream>
 namespace TinySTL {
 
 // min max
@@ -1359,6 +1360,77 @@ bool pre_permutation(BidirectionalIterator begin,BidirectionalIterator end)
 
     //use lambda expression
     //return pre_permutation(begin,end,[](value_type i1,value_type i2){return i1 < i2;});
+}
+//is_permutation
+template<typename BidirectionalIterator,typename BinaryPred>
+bool is_permutation(BidirectionalIterator begin1,BidirectionalIterator end1,
+                    BidirectionalIterator begin2,BinaryPred predicate)
+{
+
+}
+/************************************************************************************************/
+/*                                     sort                                                     */
+/************************************************************************************************/
+//bulbble_sort O(N*N)
+template<typename RandomIterator,typename BinaryPred>
+void bubble_sort(RandomIterator begin,RandomIterator end,BinaryPred predicate)
+{
+    bool sorted = true;
+    for(; begin != end; --end)
+    {
+        sorted = true;
+        for(auto next = begin + 1; next != end; ++next)
+        {
+            if(predicate(*next,*(next-1)))
+            {
+                TinySTL::iter_swap(next,next -1);
+                sorted = false;
+            }
+        }
+        if(sorted) return;
+    }
+}
+template<typename RandomIterator>
+void bubble_sort(RandomIterator begin,RandomIterator end)
+{
+    typedef typename IteratorTraits<RandomIterator>::value_type _T;
+    bubble_sort(begin,end,[](const _T& a, const _T& b){ return a < b ;});
+}
+//insertion_sort O(N*N)
+template<typename RandomIterator,typename BinaryPred>
+void insertion_sort(RandomIterator begin, RandomIterator end,BinaryPred predicate)
+{
+    if(begin == end) return;
+    for(RandomIterator current = begin + 1; current != end; ++current)
+    {
+        auto current_val = *current;
+        RandomIterator iter = current;
+        for(; iter != begin;)
+        {
+            if(predicate(current_val,*(iter-1)))
+            {
+                *iter = *(iter -1);
+                --iter;
+            }
+            else
+            {
+                break;
+            }
+        }
+        *iter = current_val;
+    }
+}
+template<typename RandomIterator>
+void insertion_sort(RandomIterator begin, RandomIterator end)
+{
+    typedef decltype(*begin) _T;
+    insertion_sort(begin,end,[](const _T& a, const _T&b){ return a < b;});
+}
+
+template<typename RandomIterator>
+void quick_sort(RandomIterator begin,RandomIterator end)
+{
+
 }
 }//namesapce TinySTL
 #endif // ALGORITHM_H
