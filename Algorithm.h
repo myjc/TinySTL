@@ -1426,11 +1426,61 @@ void insertion_sort(RandomIterator begin, RandomIterator end)
     typedef decltype(*begin) _T;
     insertion_sort(begin,end,[](const _T& a, const _T&b){ return a < b;});
 }
+/********************************quick_sort O(N*lgN)***************************************/
 
+//middle_of_3: this is an help function called by quick_sort
+template<typename Iterator,typename BinaryPred>
+typename IteratorTraits<Iterator>::value_type
+middle_of_3(Iterator left,Iterator right,BinaryPred predicate)
+{
+    Iterator middle = left + (right -left) / 2;
+    if(predicate(*middle,*left))
+    {
+        TinySTL::iter_swap(left,middle);
+    }
+    if(predicate(*right,*left))
+    {
+        TinySTL::iter_swap(left,right);
+    }
+    if(predicate(*right,*middle))
+    {
+        TinySTL::iter_swap(middle,right);
+    }
+    TinySTL::iter_swap(middle, right - 1);
+    return *(right - 1);
+}
+template<typename RandomIterator,typename BinaryPred>
+void quick_sort(RandomIterator begin,RandomIterator end,BinaryPred predicate)
+{
+    if(begin == end || begin + 1 == end) return;
+    if(end - begin <= 10)
+    {
+        insertion_sort(begin,end,predicate);
+        return;
+    }
+    typedef typename IteratorTraits<RandomIterator>::value_type value_type;
+    value_type mid = middle_of_3(begin,end -1,predicate);
+    RandomIterator first = begin;
+    RandomIterator last = end - 1;
+    for(;;)
+    {
+        while( predicate(*++first,mid)) ;
+        while( predicate(mid,*--last)) ;
+        if(first < last)
+            TinySTL::iter_swap(first,last);
+        else
+            break;
+    }
+    TinySTL::iter_swap(first,end -2);
+    quick_sort(begin,first,predicate);
+    quick_sort(last, end,predicate);
+
+}
 template<typename RandomIterator>
 void quick_sort(RandomIterator begin,RandomIterator end)
 {
-
+    typedef typename IteratorTraits<RandomIterator>::value_type _T;
+    quick_sort(begin,end,[](const _T& a, const _T& b){ return a < b;});
 }
 }//namesapce TinySTL
 #endif // ALGORITHM_H
