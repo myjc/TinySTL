@@ -45,10 +45,31 @@ void test_insertion_sort()
         std::cout << j << " ";
     std::cout <<"\n";
 }
+void test_quick_sort()
+{
+    std::cout << "test quick_sort" << std::endl;
+    int arr1[] = {9,8,7,6,5,4,3,2,1};
+
+    TinySTL::quick_sort(arr1,arr1+9);
+    displayArr(arr1,9);
+    std::vector<int> ivec;
+    ivec.reserve(1000);
+    for(int i = 0 ; i != 1000; ++i)
+    {
+        ivec.push_back(i);
+    }
+    TinySTL::quick_sort(ivec.begin(),ivec.end());
+    for(int j : ivec)
+       std::cout << j << " ";
+    std::cout <<"\n";
+    std::cout << "test quick_sort_complete" << std::endl;
+}
+
 void test_sort()
 {
     test_insertion_sort();
     test_bubble_sort();
+    test_quick_sort();
 }
 
 #endif // SORT_TEST_H
