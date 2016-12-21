@@ -1369,7 +1369,7 @@ bool is_permutation(BidirectionalIterator begin1,BidirectionalIterator end1,
 
 }
 /************************************************************************************************/
-/*                                     sort                                                     */
+/*                                     排序相关算法                                              */
 /************************************************************************************************/
 //bulbble_sort O(N*N)
 template<typename RandomIterator,typename BinaryPred>
@@ -1482,5 +1482,63 @@ void quick_sort(RandomIterator begin,RandomIterator end)
     typedef typename IteratorTraits<RandomIterator>::value_type _T;
     quick_sort(begin,end,[](const _T& a, const _T& b){ return a < b;});
 }
+//is_sorted
+template<typename ForwardIterator,typename BinaryPred>
+bool is_sorted(ForwardIterator begin,ForwardIterator end,BinaryPred predicate)
+{
+    if(begin == end) return true;
+    ForwardIterator next = begin;
+    ++next;
+    while(next != end)
+    {
+        if(predicate(*next,*begin))
+            return false;
+        ++next;
+    }
+    return true;
+}
+template<typename ForwardIterator>
+bool is_sorted(ForwardIterator begin,ForwardIterator end)
+{
+    typedef typename IteratorTraits<ForwardIterator>::value_type T;
+    return is_sorted(begin,end,[](const T& a, const T& b){ return a < b ;});
+}
+//is_sorted_until
+template<typename ForwardIterator,typename BinaryPred>
+ForwardIterator is_sorted_until(ForwardIterator begin,ForwardIterator end,BinaryPred predicate)
+{
+    if(begin == end) return end;
+    size_t count = 0;
+    size_t max_count = 0;
+    ForwardIterator next = begin;
+    ++next;
+    ForwardIterator result = next;
+    while(next != end)
+    {
+        if(predicate(*next,*begin))
+        {
+            if(max_count < count)
+            {
+                result = next;
+                max_count = count;
+            }
+            count = 0;
+        }
+        else
+        {
+            count ++;
+        }
+        ++next;
+        ++begin;
+    }
+    return result;
+}
+template<typename ForwardIterator>
+ForwardIterator is_sorted_until(ForwardIterator begin,ForwardIterator end)
+{
+    typedef typename IteratorTraits<ForwardIterator>::value_type T;
+    return is_sorted_until(begin,end,[](const T& a, const T& b){ return a < b ;});
+}
+//
 }//namesapce TinySTL
 #endif // ALGORITHM_H
