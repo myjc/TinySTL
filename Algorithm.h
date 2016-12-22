@@ -614,7 +614,8 @@ ForwardItertor search_n(ForwardItertor begin, ForwardItertor end,size_t nobjs,co
     return iter;
 }
 template<typename ForwardItertor,typename T,typename BinaryPred>
-ForwardItertor search_n(ForwardItertor begin, ForwardItertor end,size_t nobjs,const T& val,BinaryPred pred)
+ForwardItertor search_n(ForwardItertor begin, ForwardItertor end,
+                        size_t nobjs,const T& val,BinaryPred pred)
 {
     ForwardItertor iter = begin;
     while(iter != end)
@@ -881,12 +882,12 @@ bool binary_search(ForwardIterator begin,ForwardIterator end,const T& val)
 /************************************************************************* ******/
 //push_heap:要求底层容器的最后一个元素是新插入的元素，
 //对最后一个元素进行“上滤（percolate up）”操作以完成Push
-template<typename RandomAccessIterator,typename Distance,typename ElementType>
+template<typename RandomAccessIterator,typename Distance,typename ElementType,typename BinaryFunc>
 inline void _percolate_up(RandomAccessIterator begin,Distance slot_index,
-                           Distance top_index,ElementType value)
+                           Distance top_index,ElementType value,BinaryFunc pred)
 {
     Distance parent_index = (slot_index - 1)/2;
-    while(slot_index > top_index && *(begin + parent_index)< value)
+    while(slot_index > top_index && pred(*(begin + parent_index),value))
     {
         *(begin + slot_index) = *(begin + parent_index);
         slot_index = parent_index;
@@ -894,19 +895,27 @@ inline void _percolate_up(RandomAccessIterator begin,Distance slot_index,
     }
     *(begin + slot_index )= value;
 }
-
-template<typename RandomAccessIterator>
-inline void push_heap(RandomAccessIterator begin,RandomAccessIterator end)
+template<typename RandomAccessIterator,typename BinaryPred>
+inline void push_heap(RandomAccessIterator begin,RandomAccessIterator end,BinaryPred predicate)
 {
     typedef typename IteratorTraits<RandomAccessIterator>::value_type       ElementType;
     typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
-    _percolate_up(begin,Distance(end - begin -1),Distance(0),ElementType(*(end -1)));
+    _percolate_up(begin,Distance(end - begin -1),Distance(0),ElementType(*(end -1)),predicate);
+
+}
+template<typename RandomAccessIterator>
+inline void push_heap(RandomAccessIterator begin,RandomAccessIterator end)
+{
+    typedef typename IteratorTraits<RandomAccessIterator>::value_type       Type;
+    typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
+    _percolate_up(begin,Distance(end - begin -1),Distance(0),Type(*(end -1)),
+                  [](const Type& a, const Type& b){ return a < b;});
 
 }
 //pop_heap : 对最大元素执行下滤操作,使其位于底层容器尾部,未真正删除
-template<typename RandomAccessIterator,typename Distance,typename ElementType>
+template<typename RandomAccessIterator,typename Distance,typename ElementType,typename BinaryPred>
 inline void _percolate_down(RandomAccessIterator begin,Distance last_element_index,
-                          Distance aim_index,ElementType aim_value)
+                          Distance aim_index,ElementType aim_value,BinaryPred predicate)
 {
     Distance current_index = aim_index;
     while(current_index < last_element_index)
@@ -916,7 +925,7 @@ inline void _percolate_down(RandomAccessIterator begin,Distance last_element_ind
         Distance bigger_son = current_index;
         if(left_son < last_element_index) // if(leftson < last) there must be a right_son
         {
-            bigger_son = *(begin + left_son) > *(begin + right_son) ? left_son : right_son;
+            bigger_son = predicate( *(begin + right_son),*(begin + left_son) )? left_son : right_son;
         }
         else if(left_son == last_element_index)// left_son is the last, no right_son
         {
@@ -926,7 +935,7 @@ inline void _percolate_down(RandomAccessIterator begin,Distance last_element_ind
         {
             break;      //current node does not have son node
         }
-        if(*(begin+current_index) < *(begin+bigger_son))
+        if(predicate(*(begin+current_index) , *(begin+bigger_son)))
         {
             *(begin + current_index) = *(begin + bigger_son);
             *(begin + bigger_son) = aim_value;
@@ -940,9 +949,19 @@ inline void pop_heap(RandomAccessIterator begin,RandomAccessIterator end)
     typedef typename IteratorTraits<RandomAccessIterator>::value_type       ElementType;
     typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
     TinySTL::iter_swap(begin,end-1);
-    _percolate_down(begin,Distance(end - begin -2),Distance(0),ElementType(*begin));
+    _percolate_down(begin,Distance(end - begin -2),Distance(0),ElementType(*begin),
+                    [](const ElementType& a,const ElementType& b){return a < b;});
 
 }
+template<typename RandomAccessIterator,typename BinaryPred>
+inline void pop_heap(RandomAccessIterator begin, RandomAccessIterator end,BinaryPred pred)
+{
+    typedef typename IteratorTraits<RandomAccessIterator>::value_type       ElementType;
+    typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
+    TinySTL::iter_swap(begin,end-1);
+    _percolate_down(begin,Distance(end - begin -2),Distance(0),ElementType(*begin),pred);
+}
+
 //sort_heap:由于pop_heap每次将最大元素置于底层容器尾端而未真正删除，所以只要连续调用pop_heap便可将底层容器排序，
 //排序后将不再满足堆序性质。
 template<typename RandomAccessIterator>
@@ -954,23 +973,49 @@ void sort_heap(RandomAccessIterator begin,RandomAccessIterator end)
         --end;
     }
 }
+template<typename RandomAccessIterator,typename BinaryPred>
+void sort_heap(RandomAccessIterator begin,RandomAccessIterator end,BinaryPred predicate)
+{
+    while(end != begin)
+    {
+        pop_heap(begin,end,predicate);
+        --end;
+    }
+}
 //make_heap
 template<typename RandomAccessIterator>
 void make_heap(RandomAccessIterator begin,RandomAccessIterator end)
 {
     typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
+    typedef typename IteratorTraits<RandomAccessIterator>::value_type       value_type;
     Distance length = end - begin;
     if(length < 2) return;
     Distance need_percolate_down = (length -2)/2;
     do
     {
-        _percolate_down(begin,length-1,need_percolate_down,*(begin+need_percolate_down));
+        _percolate_down(begin,length-1,need_percolate_down,*(begin+need_percolate_down),
+                        [](const value_type& a, const value_type b){ return a < b;});
+        --need_percolate_down;
+    }while(need_percolate_down >= 0);
+}
+template<typename RandomAccessIterator,typename BinaryPred>
+void make_heap(RandomAccessIterator begin,RandomAccessIterator end,BinaryPred predicate)
+{
+    typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
+    typedef typename IteratorTraits<RandomAccessIterator>::value_type       value_type;
+    Distance length = end - begin;
+    if(length < 2) return;
+    Distance need_percolate_down = (length -2)/2;
+    do
+    {
+        _percolate_down(begin,length-1,need_percolate_down,*(begin+need_percolate_down),
+                        predicate);
         --need_percolate_down;
     }while(need_percolate_down >= 0);
 }
 //is_heap
-template<typename RandomAccessIterator>
-bool is_heap(RandomAccessIterator begin,RandomAccessIterator end)
+template<typename RandomAccessIterator,typename BinaryPred>
+bool is_heap(RandomAccessIterator begin,RandomAccessIterator end,BinaryPred predicate)
 {
     typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
     Distance index = 0;
@@ -979,16 +1024,23 @@ bool is_heap(RandomAccessIterator begin,RandomAccessIterator end)
     const Distance last_element_index = end - begin-1;
     while (left_son <last_element_index)
     {
-        if(*left_son > *cur || *(left_son+1) > *cur)
+        if(predicate(*cur,*left_son) || predicate(*cur,*(left_son+1)))
             return false;
         ++cur;
         ++index;
         left_son = begin + (2 *index +1);
     }
-    if(left_son == last_element_index && *left_son > *cur)
+    if(left_son == last_element_index && predicate(*cur,*left_son))
         return false;
     return true;
 }
+template<typename RandomAccessIterator>
+bool is_heap(RandomAccessIterator begin,RandomAccessIterator end)
+{
+    typedef typename IteratorTraits<RandomAccessIterator>::value_type _T;
+    is_heap(begin,end,[](const _T& a, const _T& b){ return a < b;});
+}
+
 /***********************************************************************************************/
 /*                                   划分与排序算法                                             */
 /***********************************************************************************************/
@@ -1538,6 +1590,57 @@ ForwardIterator is_sorted_until(ForwardIterator begin,ForwardIterator end)
 {
     typedef typename IteratorTraits<ForwardIterator>::value_type T;
     return is_sorted_until(begin,end,[](const T& a, const T& b){ return a < b ;});
+}
+//partial_sort
+template<typename RandomIterator,typename BinaryPred>
+void partial_sort(RandomIterator begin,RandomIterator middle,
+                  RandomIterator end,BinaryPred predicate)
+{
+    make_heap(begin,middle,predicate);
+    RandomIterator iter = middle;
+    while(iter != end)
+    {
+        if(predicate(*begin,*iter))
+        {
+            TinySTL::iter_swap(begin,iter);
+            _percolate_down(begin,middle-begin-1,0,*begin,predicate);
+        }
+    }
+    sort_heap(begin,middle,predicate);
+}
+template<typename RandomIterator>
+void partial_sort(RandomIterator begin,RandomIterator middle,
+                  RandomIterator end)
+{
+    typedef typename IteratorTraits<RandomIterator>::value_type _T;
+    partial_sort(begin,middle,end,
+                 [](const _T& a,const T& b){ return a < b; });
+}
+//partial_sort_copy
+template<typename ForwardIterator,typename RandomIterator,typename BinaryPred>
+RandomIterator partial_sort_copy(ForwardIterator begin,ForwardIterator end,
+                                 RandomIterator dest_begin,RandomIterator dest_end,
+                                 BinaryPred pred)
+{
+    size_t input_length = TinySTL::distance(begin,end);
+    size_t output_length = TinySTL::distance(dest_begin,dest_end);
+    size_t length = min(input_length,output_length);
+    ForwardIterator input_iter = begin;
+    advance(input_iter,length);
+    RandomIterator result =  copy(begin,input_iter,dest_begin);
+
+}
+
+//nth_element
+template<typename RandomIterator,typename BinaryPred>
+void nth_element(RandomIterator begin, RandomIterator nth,
+                 RandomIterator end,BinaryPred predicate)
+{
+    typedef typename IteratorTraits<RandomIterator>::difference_type    Distance;
+    typedef typename IteratorTraits<RandomIterator>::value_type         value_type;
+    RandomIterator first = begin;
+    RandomIterator last = end;
+    value_type value = middle_of_3(first, last,predicate);
 }
 //
 }//namesapce TinySTL
