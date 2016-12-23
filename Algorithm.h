@@ -1628,7 +1628,17 @@ RandomIterator partial_sort_copy(ForwardIterator begin,ForwardIterator end,
     ForwardIterator input_iter = begin;
     advance(input_iter,length);
     RandomIterator result =  copy(begin,input_iter,dest_begin);
-
+    TinySTL::make_heap(dest_begin,result,pred);
+    while(input_iter != end)
+    {
+        if(pred(*input_iter,*dest_begin))
+        {
+            *dest_begin = *input_iter;
+            _percolate_down(dest_begin,result-dest_begin-1,0,*dest_begin,pred);
+        }
+    }
+    sort_heap(dest_begin,result,pred);
+    return result;
 }
 
 //nth_element
