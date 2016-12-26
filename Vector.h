@@ -2,6 +2,8 @@
 #define TINYSTL_VECTOR_H
 #include<cstddef>
 #include"Allocator.h"
+#include"Iterator.h"
+#include"Memory.h"
 namespace TinySTL
 {
 template<typename T,typename Alloc = alloc> class Vector
@@ -14,15 +16,16 @@ public:
     typedef value_type& reference;
     typedef size_t size_type;
     typedef ptrdiff_t difference_type;
+    typedef ReverseIterator<iterator> reverse_iterator;
 protected:
     typedef allocator<value_type,Alloc> data_allocator;
 private:
-    iterator start;
-    iterator finish;
-    iterator end_of_storage;
+    iterator start_;
+    iterator finish_;
+    iterator end_of_storage_;
 public:
     //构造 析构 赋值
-    Vector():start(nullptr),finish(nullptr),end_of_storage(nullptr){}
+    Vector():start_(nullptr),finish_(nullptr),end_of_storage_(nullptr){}
     explicit Vector(const size_type& objs);
     Vector(const size_type& objs,const value_type& value);
     Vector(const Vector& vec);
@@ -35,21 +38,23 @@ public:
 
     ~Vector();
     //iterator
-    iterator begin(){return start;}
-    iterator end() {return finish;}
+    iterator begin(){return start_;}
+    iterator end() {return finish_;}
+    reverse_iterator rbegin(){ return reverse_iterator(finish_);}
+    reverse_iterator rend(){ return reverse_iterator(start_);}
     //容量相关
-    size_type size()const{return finish - start;}
-    bool empty()const{return finish == start;}
-    size_type capacity()const{return end_of_storage - start;}
+    size_type size()const{return finish_ - start_;}
+    bool empty()const{return finish_ == start_;}
+    size_type capacity()const{return end_of_storage_ - start_;}
     void resize(const size_type size, value_type val = value_type());
     void reserve(const size_type size);
     void shrink_to_fit();
     //元素访问
-    reference operator[](const size_type index){return *(start+index);}
+    reference operator[](const size_type index){return *(start_+index);}
     reference at(const size_type index);
     reference front(){return *begin();}
     reference back(){return *(end()-1);}
-    pointer data(){return start;}
+    pointer data(){return start_;}
     //容器操作
     void push_back(const value_type& value);
     void pop_back();
@@ -61,6 +66,12 @@ public:
     template<typename InputIterator>
     void insert(iterator position,InputIterator first, InputIterator last);
     void insert(iterator position, const size_type nobjs,const value_type &value);
+private:
+    //help methods
+    void realloc_and_copy(size_t nobjs)
+    {
+        iterator new_start;
+    }
 
 
 
