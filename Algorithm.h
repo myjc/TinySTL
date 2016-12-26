@@ -6,6 +6,7 @@
 #include"Utility.h"
 #include"Functional.h"
 #include <iostream>
+#include "Iterator.h"
 namespace TinySTL {
 
 // min max
@@ -280,8 +281,9 @@ template<typename RandomAccessIterator,typename OutputIterator>
 OutputIterator _copy_rand(RandomAccessIterator begin,RandomAccessIterator end,
                               OutputIterator dest)
 {
+    std::cout << " call _copy_rand" << std::endl;
     typedef typename IteratorTraits<RandomAccessIterator>::difference_type Distance;
-    for(Distance n = end - begin; n != 0;--n)
+    for(Distance n = end - begin; n > 0;--n)
     {
         *dest = *begin;
         ++dest;
@@ -292,7 +294,7 @@ OutputIterator _copy_rand(RandomAccessIterator begin,RandomAccessIterator end,
 template<typename T>
 T* _copy_argumentPtr(const T* begin,const T* end,T* dest,_true_type)
 {
-    memmove(dest,begin,end-begin);
+    memmove(dest,begin,(end-begin)* sizeof(T));
     return dest+(end-begin);
 }
 template<typename T>
@@ -341,6 +343,7 @@ struct _copy_dispatch<T*,T*>
 {
     T* operator()(const T* begin, const T* end,T*dest)
     {
+        std::cout << " call _copy_dispatch T*" << std::endl;
         typedef typename _type_traits<T>::has_trivial_assignment_operator Type;
         return _copy_argumentPtr(begin,end,dest,Type());
     }
@@ -348,6 +351,7 @@ struct _copy_dispatch<T*,T*>
 template<typename InputIterator,typename OutputIterator>
 OutputIterator copy(InputIterator begin,InputIterator end,OutputIterator dest)
 {
+    std::cout << " call copy" << std::endl;
     return _copy_dispatch<InputIterator,OutputIterator>()(begin,end,dest);
 }
 
@@ -359,9 +363,20 @@ inline char* copy( char* begin,char* end, char* dest)
 }
 inline wchar_t* copy( wchar_t* begin,wchar_t* end, wchar_t* dest)
 {
-    size_t length = end- begin;
+    size_t length = (end- begin)* sizeof(wchar_t);
     memmove(dest,begin,length);
     return dest + length;
+}
+//copy_backward
+template<typename BidirectionalIterator>
+BidirectionalIterator copy_backward(BidirectionalIterator begin,BidirectionalIterator end,
+                                    BidirectionalIterator dest)
+{
+    ReverseIterator<BidirectionalIterator> rbegin(end);
+    ReverseIterator<BidirectionalIterator> rend(begin);
+    ReverseIterator<BidirectionalIterator> rdest(dest);
+    rdest = copy(rbegin,rend,rdest);
+    return rdest.base();
 }
 
 //merge 要求两个区间都是有序的
@@ -1127,35 +1142,6 @@ BidirectionalIterator partition(BidirectionalIterator begin,BidirectionalIterato
     }
 }
 //stable_partion:需利用额外缓冲区
-//is_sorted
-template<typename RandomAccessIterator>
-bool is_sorted(RandomAccessIterator begin,RandomAccessIterator end)
-{
-    if(begin == end) return true;
-    RandomAccessIterator curr = begin;
-    ++curr;
-    while(curr != end)
-    {
-        if(*curr < *begin)
-            return false;
-        ++curr;
-    }
-    return true;
-}
-template<typename RandomIterator,typename CompareFunc>
-bool is_sorted(RandomIterator begin, RandomIterator end, CompareFunc fun)
-{
-    if(begin == end) return true;
-    RandomIterator curr = begin;
-    ++curr;
-    while(curr != end)
-    {
-        if(fun(*curr,*end))
-            return false;
-        ++curr;
-    }
-    return true;
-}
 /**********************************************************************************************/
 /*                                    通用重排操作                                             */
 /**********************************************************************************************/
@@ -1614,7 +1600,7 @@ void partial_sort(RandomIterator begin,RandomIterator middle,
 {
     typedef typename IteratorTraits<RandomIterator>::value_type _T;
     partial_sort(begin,middle,end,
-                 [](const _T& a,const T& b){ return a < b; });
+                 [](const _T& a,const _T& b){ return a < b; });
 }
 //partial_sort_copy
 template<typename ForwardIterator,typename RandomIterator,typename BinaryPred>
@@ -1640,18 +1626,13 @@ RandomIterator partial_sort_copy(ForwardIterator begin,ForwardIterator end,
     sort_heap(dest_begin,result,pred);
     return result;
 }
-
-//nth_element
-template<typename RandomIterator,typename BinaryPred>
-void nth_element(RandomIterator begin, RandomIterator nth,
-                 RandomIterator end,BinaryPred predicate)
+template<typename ForwardIterator,typename RandomIterator>
+RandomIterator partial_sort_copy(ForwardIterator begin,ForwardIterator end,
+                                 RandomIterator dest_begin,RandomIterator dest_end)
 {
-    typedef typename IteratorTraits<RandomIterator>::difference_type    Distance;
-    typedef typename IteratorTraits<RandomIterator>::value_type         value_type;
-    RandomIterator first = begin;
-    RandomIterator last = end;
-    value_type value = middle_of_3(first, last,predicate);
+    using _T = typename IteratorTraits<ForwardIterator>::value_type;
+    return partial_sort_copy(begin,end,dest_begin,dest_end,
+                             [](const _T& a, const _T& b){ return a < b;});
 }
-//
 }//namesapce TinySTL
 #endif // ALGORITHM_H

@@ -2,6 +2,7 @@
 #define TINYSTL_MEMORY_H
 #include <cstddef>
 #include "Utility.h"
+#include "Uninitialize.h"
 namespace TinySTL
 {
 template<typename ElementType>
