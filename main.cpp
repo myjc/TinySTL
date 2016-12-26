@@ -8,4 +8,5 @@ int main()
 {
     //test_permutation();
     //test_sort();
+    test_copy();
 }
