@@ -281,7 +281,6 @@ template<typename RandomAccessIterator,typename OutputIterator>
 OutputIterator _copy_rand(RandomAccessIterator begin,RandomAccessIterator end,
                               OutputIterator dest)
 {
-    std::cout << " call _copy_rand" << std::endl;
     typedef typename IteratorTraits<RandomAccessIterator>::difference_type Distance;
     for(Distance n = end - begin; n > 0;--n)
     {
@@ -343,7 +342,6 @@ struct _copy_dispatch<T*,T*>
 {
     T* operator()(const T* begin, const T* end,T*dest)
     {
-        std::cout << " call _copy_dispatch T*" << std::endl;
         typedef typename _type_traits<T>::has_trivial_assignment_operator Type;
         return _copy_argumentPtr(begin,end,dest,Type());
     }
@@ -351,7 +349,6 @@ struct _copy_dispatch<T*,T*>
 template<typename InputIterator,typename OutputIterator>
 OutputIterator copy(InputIterator begin,InputIterator end,OutputIterator dest)
 {
-    std::cout << " call copy" << std::endl;
     return _copy_dispatch<InputIterator,OutputIterator>()(begin,end,dest);
 }
 
