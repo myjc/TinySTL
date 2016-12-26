@@ -141,7 +141,7 @@ public:
 template <typename Iterator>
 ptrdiff_t operator-(ReverseIterator<Iterator> lhv, ReverseIterator<Iterator> rhv)
 {
-    return lhv.base() - rhv.base();
+    return rhv.base() - lhv.base();
 }
 }
 #endif // TINYSTL_TERATOR_H
