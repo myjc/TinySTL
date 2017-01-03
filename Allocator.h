@@ -19,34 +19,39 @@ public:
     typedef const T&    const_reference;
     typedef size_t      size_type;
     typedef ptrdiff_t   difference_type;
+private:
+    Alloc allocator_;
 public:
     static T* allocate(size_t nobjs)
     {
-        return nobjs == 0 ? nullptr : static_cast<T*>(Alloc::allocate(nobjs * sizeof(T)));
+        return nobjs == 0 ? nullptr : static_cast<T*>(allocator_.allocate(nobjs * sizeof(T)));
     }
     static T* allocate()
     {
-        return static_cast<T*>(Alloc::allocate(sizeof(T)));
+        return static_cast<T*>(allocator_.allocate(sizeof(T)));
     }
     static void deallocate(T *p, size_t nobjs)
     {
         if( nobjs != 0)
-            Alloc::deallocate(p, nobjs*sizeof(T));
+            allocator_.deallocate(p, nobjs*sizeof(T));
     }
     static void deallocate(T *p)
     {
-        Alloc::deallocate(p,sizeof(T));
+        allocator_.deallocate(p,sizeof(T));
     }
-    template<typename Args>
-    static void construct(T *p,const Args& args)
+    template<typename... Args>
+    static void construct(T *p,const Args&... args)
     {
-        TinySTL::construct(p,args);
+        TinySTL::construct(p,TinySTL::forward<T>(args)...);
     }
     static void destroy(T* p)
     {
         TinySTL::destroy(p);
     }
-
+    static void destroy(T* first,T* last)
+    {
+        TinySTL::destroy(first,last);
+    }
 };
 }//命名空间
 #endif // ALLOCATOR_H
