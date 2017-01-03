@@ -4,9 +4,11 @@
 #include"Allocator.h"
 #include"Iterator.h"
 #include"Memory.h"
+#include"Algorithm.h"
 namespace TinySTL
 {
-template<typename T,typename Alloc = alloc> class Vector
+template<typename T,typename Alloc = alloc>
+class Vector
 {
 public:
     typedef T value_type;
@@ -17,29 +19,66 @@ public:
     typedef size_t size_type;
     typedef ptrdiff_t difference_type;
     typedef ReverseIterator<iterator> reverse_iterator;
+    typedef const ReverseIterator<iterator> const_reverse_iterator;
 protected:
     typedef allocator<value_type,Alloc> data_allocator;
 private:
+    data_allocator allocator_;
     iterator start_;
     iterator finish_;
     iterator end_of_storage_;
+
 public:
     //构造 析构 赋值
     Vector():start_(nullptr),finish_(nullptr),end_of_storage_(nullptr){}
-    explicit Vector(const size_type& objs);
-    Vector(const size_type& objs,const value_type& value);
-    Vector(const Vector& vec);
-    Vector(Vector&& vec);
+    explicit Vector(size_type nobjs) { fill_initialize(nobjs,value_type());}
+    Vector(size_type nobjs,const value_type& value) {fill_initialize(nobjs,value;}
+    Vector(const Vector& vec):allocator_(vec.allocator_),
+        start_(allocator_.allocate(vec.size()))
+    {
+        finish_ = uninitialized_copy(vec.begin(),vec.end(),start_);
+        end_of_storage_ = finish_;
+    }
+
+    Vector(Vector&& vec):start_(vec.start_),finish_(vec.finish_),
+                         end_of_storage_(vec.end_of_storage_)
+    {
+        vec.start_ = nullptr;
+        vec.finish_ = nullptr;
+        vec.end_of_storage_ = nullptr;
+    }
+
     template<typename InputIterator>
-    Vector(InputIterator first,InputIterator last);
+    Vector(InputIterator first,InputIterator last)
+    {
+        size_type len = distance(first,last);
+        start_ = allocator_.allocate(len);
+        finish_ = uninitialized_copy(first,last,start_);
+        end_of_storage_ = finish_;
+    }
 
     Vector& operator=(const Vector& vec);
-    Vector& operator=(Vector&& vec);
+    Vector& operator=(Vector&& vec)
+    {
+        start_ = vec.start_;
+        finish_ = vec.finish_;
+        end_of_storage_ = vec.end_of_storage_;
+        vec.start_ = nullptr;
+        vec.finish_ = nullptr;
+        vec.end_of_storage_ = nullptr;
+    }
 
-    ~Vector();
+    ~Vector()
+    {
+        erase(start_,finish_);
+        deallocate();
+    }
+
     //iterator
     iterator begin(){return start_;}
     iterator end() {return finish_;}
+    const_iterator cbegin(){ return start_;}
+    const_iterator cend(){ return finish_;}
     reverse_iterator rbegin(){ return reverse_iterator(finish_);}
     reverse_iterator rend(){ return reverse_iterator(start_);}
     //容量相关
@@ -51,32 +90,75 @@ public:
     void shrink_to_fit();
     //元素访问
     reference operator[](const size_type index){return *(start_+index);}
-    reference at(const size_type index);
     reference front(){return *begin();}
     reference back(){return *(end()-1);}
     pointer data(){return start_;}
     //容器操作
-    void push_back(const value_type& value);
-    void pop_back();
-    void clear();
-    iterator erase(iterator position);
-    template<typename InputIterator>
-    void erase(InputIterator first,InputIterator last);
-    iterator insert(iterator position,const value_type& value);
+    void push_back(const value_type& value)
+    {
+        if(finish_ != end_of_storage_)
+        {
+            allocator_.construct(finish_,value);
+        }
+        else
+            insert_aux(finish_,value);
+    }
+
+    void pop_back()
+    {
+        --finish_;
+        allocator_.destroy(finish_);
+    }
+    void clear()
+    {
+        erase(begin(),end());
+    }
+
+    iterator erase(iterator position)
+    {
+        if(position + 1 != end())
+            copy(position + 1,finish_,position);
+        --finish_;
+        allocator_.destroy(finish_);
+        return position;
+    }
+    template<typename Iterator>
+    iterator erase(Iterator first,Iterator last)
+    {
+        iterator iter = copy(last,finish_,first);
+        allocator_.destroy(iter,finish_);
+        finish_ = finish_ - (last - first);
+        return first;
+    }
+
+    void insert(iterator position,const value_type& value)
+    {
+        insert_aux(position,value);
+    }
+
     template<typename InputIterator>
     void insert(iterator position,InputIterator first, InputIterator last);
     void insert(iterator position, const size_type nobjs,const value_type &value);
 private:
     //help methods
-    void realloc_and_copy(size_t nobjs)
+    iterator allocate_and_fill(size_t nobjs,const value_type& val)
     {
-        iterator new_start;
+        iterator result = allocator_.allocate(nobjs);
+        uninitialized_fill_n(result,nobjs,val);
+        return result;
+    }
+    void fill_initialize(size_type n, const value_type& val)
+    {
+        start_ = allocate_and_fill(n,val);
+        finish_ = start_ + n;
+        end_of_storage_ = finish_;
+    }
+    void deallocate()
+    {
+        allocator_.deallocate(start_,end_of_storage_ - start_);
     }
 
-
-
-
-
+    void insert_aux(iterator position,const value_type& val);
 };//Vector
 }//namesapce TinySTL
 #endif // VECTOR_H
