@@ -3,12 +3,13 @@
 
 #include<new>
 #include "TypeTraits.h"
+#include "Utility.h"
 
 namespace TinySTL {
-template<typename T,typename Value>
-inline void construct(T* ptr,const Value& value)
+template<typename T,typename ...Value>
+inline void construct(T* ptr,const Value&... value)
 {
-    new (ptr) T(value);
+    new (ptr) T(TinySTL::forward<T>(value)...);
 }
 template<typename T>
 inline void destroy(T* pointer)
