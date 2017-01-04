@@ -104,7 +104,7 @@ struct DefaultDeleter
     }
 };
 
-template<typename T,typename Deleter = DefaultDeleter>
+template<typename T,typename Deleter = DefaultDeleter<T>>
 class UniquePtr
 {
 public:
