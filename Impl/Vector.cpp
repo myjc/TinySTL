@@ -27,13 +27,40 @@ void Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
         ++new_finish;
         new_finish = uninitialized_copy(position,finish_,new_finish);
         //释放原来位置的元素和空间
-        destroy(begin(),end());
+        allocator_.destroy(begin(),end());
         deallocate();
         //调整使指向新空间
         start_ = new_start;
         finish_ = new_finish;
         end_of_storage_ = start_ + new_len;
 
+    }
+}//insert_aux
+template<typename T,typename Alloc = alloc>
+void Vector<T,Alloc>::resize(const size_type new_size, value_type val = value_type())
+{
+    if(new_size < size())
+    {
+        iterator iter = start_ + new_size;
+        erase(iter,finish_);
+    }
+    else if(new_size < capacity())
+    {
+        iterator iter = start_ + new_size;
+        uninitialized_fill(finish_,iter,val);
+        finish_ = iter;
+    }
+    else if(new_size > capacity())
+    {
+        size_type old_size = size();
+        iterator new_start = allocator_.allocate(new_size);
+        iterator new_finish_ = uninitialized_copy(start_,finish_,new_start);
+        new_finish_ = uninitialized_fill_n(finish_,new_size - old_size,val);
+        allocator_.destroy(begin(),end());
+        deallocate();
+        start_ = new_start;
+        finish_ = new_finish_;
+        end_of_storage_ = finish_;
     }
 }
 }

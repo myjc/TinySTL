@@ -86,8 +86,30 @@ public:
     bool empty()const{return finish_ == start_;}
     size_type capacity()const{return end_of_storage_ - start_;}
     void resize(const size_type size, value_type val = value_type());
-    void reserve(const size_type size);
-    void shrink_to_fit();
+
+    void reserve(const size_type size)
+    {
+        if(capacity() < size)
+        {
+            iterator new_start = allocator_.allocate(size);
+            iterator new_finish = uninitialized_copy(begin(),end(),new_start);
+            destroy(begin(),end());
+            deallocate();
+            start_ = new_start;
+            finish_ = new_finish;
+            end_of_storage_ = finish_;
+        }
+    }
+
+    void shrink_to_fit()
+    {
+        if(capacity() > size())
+        {
+            allocator_.deallocate(finish_,end_of_storage_);
+            end_of_storage_ = finish_;
+        }
+    }
+
     //元素访问
     reference operator[](const size_type index){return *(start_+index);}
     reference front(){return *begin();}
