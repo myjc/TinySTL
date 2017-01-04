@@ -32,7 +32,8 @@ HEADERS += \
     Test/permutation_test.h \
     Test/screen_show.h \
     Test/sort_test.h \
-    Test/test_copy.h
+    Test/test_copy.h \
+    Test/vector_test.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
