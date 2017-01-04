@@ -32,7 +32,7 @@ public:
     //构造 析构 赋值
     Vector():start_(nullptr),finish_(nullptr),end_of_storage_(nullptr){}
     explicit Vector(size_type nobjs) { fill_initialize(nobjs,value_type());}
-    Vector(size_type nobjs,const value_type& value) {fill_initialize(nobjs,value;}
+    Vector(size_type nobjs,const value_type& value) { fill_initialize(nobjs,value);}
     Vector(const Vector& vec):allocator_(vec.allocator_),
         start_(allocator_.allocate(vec.size()))
     {
@@ -85,7 +85,7 @@ public:
     size_type size()const{return finish_ - start_;}
     bool empty()const{return finish_ == start_;}
     size_type capacity()const{return end_of_storage_ - start_;}
-    void resize(const size_type size, value_type val = value_type());
+    void resize(size_type size, value_type val = value_type());
 
     void reserve(const size_type size)
     {

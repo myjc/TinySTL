@@ -1,7 +1,7 @@
 #include "../Vector.h"
 namespace TinySTL
 {
-template<typename T,typename Alloc = alloc>
+template<typename T,typename Alloc>
 void Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
 {
     if(finish_ != end_of_storage_)
@@ -19,7 +19,7 @@ void Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
         if(old_len == 0)
             new_len = 1;
         else
-            new_len = max(2, old_len * 1.5);
+            new_len = max(size_type(2), old_len * 2);
         iterator new_start = allocator_.allocate(new_len);
         iterator new_finish = new_start;
         new_finish = uninitialized_copy(start_,position,new_start);
@@ -36,8 +36,8 @@ void Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
 
     }
 }//insert_aux
-template<typename T,typename Alloc = alloc>
-void Vector<T,Alloc>::resize(const size_type new_size, value_type val = value_type())
+template<typename T,typename Alloc>
+void Vector<T,Alloc>::resize(size_type new_size, value_type val)
 {
     if(new_size < size())
     {
