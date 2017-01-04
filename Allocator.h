@@ -5,9 +5,6 @@
 #include "Construct.h"
 namespace TinySTL
 {
-
-class alloc; // allocate deallocate Impl
-
 template<typename T,typename Alloc = alloc>
 class allocator
 {
@@ -22,29 +19,29 @@ public:
 private:
     Alloc allocator_;
 public:
-    static T* allocate(size_t nobjs)
+    T* allocate(size_t nobjs)
     {
         return nobjs == 0 ? nullptr : static_cast<T*>(allocator_.allocate(nobjs * sizeof(T)));
     }
-    static T* allocate()
+    T* allocate()
     {
         return static_cast<T*>(allocator_.allocate(sizeof(T)));
     }
-    static void deallocate(T *p, size_t nobjs)
+    void deallocate(T *p, size_t nobjs)
     {
         if( nobjs != 0)
-            allocator_.deallocate(p, nobjs*sizeof(T));
+            allocator_.deallocate(static_cast<void*>(p), nobjs*sizeof(T));
     }
-    static void deallocate(T *p)
+    void deallocate(T *p)
     {
-        allocator_.deallocate(p,sizeof(T));
+        allocator_.deallocate(static_cast<void*>(p),sizeof(T));
     }
     template<typename... Args>
-    static void construct(T *p,const Args&... args)
+    void construct(T *p,const Args&... args)
     {
         TinySTL::construct(p,TinySTL::forward<T>(args)...);
     }
-    static void destroy(T* p)
+    void destroy(T* p)
     {
         TinySTL::destroy(p);
     }

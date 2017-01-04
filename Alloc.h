@@ -38,9 +38,9 @@ private:
     static char *end_free;
     static size_t heap_size;
 public:
-    static void *allocate(size_t n);
-    static void deallocate(void *ptr,size_t n);
-    static void *reallocate(void *ptr, size_t odd_size,size_t new_size);
+    void *allocate(size_t n);
+    void deallocate(void *ptr,size_t n);
+    void *reallocate(void *ptr, size_t odd_size,size_t new_size);
 };
 }//namespace TinySTL
 #endif // ALLOC_H
