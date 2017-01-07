@@ -26,6 +26,29 @@ template<typename T,typename CompareFunc> T min(const T& v1, const T& v2,Compare
 {
     return (func(v1,v2)) ? v1 :v2;
 }
+// lexicographical_compare
+template<typename InputIter1,typename InputIter2,typename BinaryPred>
+bool lexicographical_compare(InputIter1 begin1,InputIter1 end1,
+                             InputIter2 begin2,InputIter2 end2,BinaryPred pred)
+{
+    for(; begin1 != end1 && begin2 != end2; ++begin1,++begin2)
+    {
+        if(pred(*begin1,*end1))
+            return true;
+        if(pred(*begin2,*begin1))
+            return false;
+    }
+    //如果第二个序列到达末尾，则相等或者第二个序列较小
+    return begin2 != end2;
+}
+template<typename InputIter1,typename InputIter2>
+bool lexicographical_compare(InputIter1 begin1,InputIter1 end1,
+                             InputIter2 begin2,InputIter2 end2)
+{
+    typedef typename IteratorTraits<InputIter1>::value_type Type;
+    lexicographical_compare(begin1,end1,begin2,end2,
+                            [](const Type& a, const Type& b){ return a < b; });
+}
 //for_each
 template<typename InputIterator, typename UnaryPred>
 UnaryPred for_each(InputIterator begin, InputIterator end, UnaryPred pred)
