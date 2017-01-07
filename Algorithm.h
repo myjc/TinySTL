@@ -120,18 +120,21 @@ inline void fill(wchar_t* first, wchar_t* last, const wchar_t& value)
 }
 //fill_n(begin,n,val)
 template<typename ForwardIterator,typename T>
-void fill_n(ForwardIterator pos,size_t n,const T& value)
+ForwardIterator fill_n(ForwardIterator pos,size_t n,const T& value)
 {
     for(;n > 0; n--,pos++)
         *pos = value;
+    return pos;
 }
-inline void fill_n(char* pos, const size_t n,const char& value)
+inline char* fill_n(char* pos, const size_t n,const char& value)
 {
     memset(pos,static_cast<unsigned char>(value),n);
+    return pos + n;
 }
-inline void fill_n(wchar_t *pos, const size_t n, const wchar_t &value)
+inline wchar_t* fill_n(wchar_t *pos, const size_t n, const wchar_t &value)
 {
     memset(pos,static_cast<unsigned char>(value),n*sizeof(wchar_t));
+    return pos + n;
 }
 //generate
 template<typename OutputIterator,typename GenerateFunc>
