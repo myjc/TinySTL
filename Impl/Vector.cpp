@@ -2,7 +2,7 @@
 namespace TinySTL
 {
 template<typename T,typename Alloc>
-void Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
+iterator Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
 {
     if(finish_ != end_of_storage_)
     {
@@ -11,6 +11,7 @@ void Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
         value_type val_copy = val;
         copy_backward(position,finish_-2,finish_ - 1);
         *position = val_copy;
+        return position;
     }
     else
     {
@@ -23,6 +24,7 @@ void Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
         iterator new_start = allocator_.allocate(new_len);
         iterator new_finish = new_start;
         new_finish = uninitialized_copy(start_,position,new_start);
+        iterator result = new_finish; // return value
         allocator_.construct(new_finish,val);
         ++new_finish;
         new_finish = uninitialized_copy(position,finish_,new_finish);
@@ -33,7 +35,7 @@ void Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
         start_ = new_start;
         finish_ = new_finish;
         end_of_storage_ = start_ + new_len;
-
+        return result;
     }
 }//insert_aux
 template<typename T,typename Alloc>
@@ -61,6 +63,43 @@ void Vector<T,Alloc>::resize(size_type new_size, value_type val)
         start_ = new_start;
         finish_ = new_finish_;
         end_of_storage_ = finish_;
+    }
+}//resize
+template<typename T,typename Alloc>
+iterator Vector<T,Alloc>::insert(iterator position,size_type nobjs,const value_type& value)
+{
+    if(capacity() - size() >= nobjs)
+    {
+        size_type elements_after = finish_ - position;//插入点之后的元素个数
+        if(elements_after >= nobjs)
+        {
+            uninitialized_copy(finish_ - nobjs,finish_,finish_);
+            copy_backward(position,finish_ - nobjs,finish_);
+            fill_n(position,nobjs,value);
+            finish_ += nobjs;
+            return position;
+        }
+        else
+        {
+            iterator new_finish = uninitialized_fill_n(finish_, nobjs - elements_after,value);
+            finish_ = uninitialized_copy(position,finish_,new_finish);
+            fill_n(position,elements_after,value);
+            return position;
+        }
+    }
+    else
+    {
+        iterator new_start = allocator_.allocate(size() + nobjs);
+        iterator new_finish = uninitialized_copy(begin(),position,new_start);
+        iterator result = new_finish; // return result
+        new_finish = uninitialized_fill_n(new_finish,nobjs,value);
+        new_finish = uninitialized_copy(position,finish_,new_finish);
+        allocator_.destroy(begin(),end());
+        deallocate();
+        start_ = new_start;
+        finish_ = new_finish;
+        end_of_storage_ = new_finish;
+        return result;
     }
 }
 }

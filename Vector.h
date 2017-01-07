@@ -160,7 +160,7 @@ public:
 
     template<typename InputIterator>
     void insert(iterator position,InputIterator first, InputIterator last);
-    void insert(iterator position, const size_type nobjs,const value_type &value);
+    void insert(iterator position, size_type nobjs,const value_type &value);
 private:
     //help methods
     iterator allocate_and_fill(size_t nobjs,const value_type& val)
@@ -180,7 +180,7 @@ private:
         allocator_.deallocate(start_,end_of_storage_ - start_);
     }
 
-    void insert_aux(iterator position,const value_type& val);
+    iterator insert_aux(iterator position,const value_type& val);
 };//Vector
 }//namesapce TinySTL
 #endif // VECTOR_H
