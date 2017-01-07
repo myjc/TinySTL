@@ -153,14 +153,14 @@ public:
         return first;
     }
 
-    void insert(iterator position,const value_type& value)
+    iterator insert(iterator position,const value_type& value)
     {
-        insert_aux(position,value);
+         return insert_aux(position,value);
     }
 
     template<typename InputIterator>
-    void insert(iterator position,InputIterator first, InputIterator last);
-    void insert(iterator position, size_type nobjs,const value_type &value);
+    iterator insert(iterator position,InputIterator first, InputIterator last);
+    iterator insert(iterator position, size_type nobjs,const value_type &value);
 private:
     //help methods
     iterator allocate_and_fill(size_t nobjs,const value_type& val)

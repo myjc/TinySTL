@@ -37,7 +37,7 @@ iterator Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
         end_of_storage_ = start_ + new_len;
         return result;
     }
-}//insert_aux
+}//end insert_aux
 template<typename T,typename Alloc>
 void Vector<T,Alloc>::resize(size_type new_size, value_type val)
 {
@@ -64,7 +64,7 @@ void Vector<T,Alloc>::resize(size_type new_size, value_type val)
         finish_ = new_finish_;
         end_of_storage_ = finish_;
     }
-}//resize
+}//end resize
 template<typename T,typename Alloc>
 iterator Vector<T,Alloc>::insert(iterator position,size_type nobjs,const value_type& value)
 {
@@ -95,6 +95,51 @@ iterator Vector<T,Alloc>::insert(iterator position,size_type nobjs,const value_t
         new_finish = uninitialized_fill_n(new_finish,nobjs,value);
         new_finish = uninitialized_copy(position,finish_,new_finish);
         allocator_.destroy(begin(),end());
+        deallocate();
+        start_ = new_start;
+        finish_ = new_finish;
+        end_of_storage_ = new_finish;
+        return result;
+    }
+}
+template<typename T,typename Alloc>
+template<typename InputIterator>
+iterator Vector<T,Alloc>::insert(iterator position,InputIterator begin,InputIterator end)
+{
+    if(begin == end)
+    {
+        return position;
+    }
+    size_type insert_nobjs = distance(begin,end);
+    if(capacity() - size() > insert_nobjs)
+    {
+        size_type elements_after = finish_ - position;//插入点之后的元素个数
+        if(elements_after >= insert_nobjs)
+        {
+            uninitialized_copy(finish_ - insert_nobjs,finish_,finish_);
+            copy_backward(position,finish_ - insert_nobjs,finish_);
+            copy(begin,end,position);
+            finish_ += insert_nobjs;
+            return position;
+        }
+        else
+        {
+            InputIterator iter = begin;
+            advance(iter,insert_nobjs - elements_after);
+            iterator new_finish = uninitialized_copy(iter,end,finish_);
+            finish_ = uninitialized_copy(position,finish_,new_finish);
+            copy(begin,iter,position);
+            return position;
+        }
+    }
+    else
+    {
+        iterator new_start = allocator_.allocate(size() + insert_nobjs);
+        iterator new_finish = uninitialized_copy(start_,position,new_start);
+        iterator result = new_finish; // return result
+        new_finish = uninitialized_copy(begin,end,new_finish);
+        new_finish = uninitialized_copy(position,finish_,new_finish);
+        allocator_.destroy(start_,finish_);
         deallocate();
         start_ = new_start;
         finish_ = new_finish;
