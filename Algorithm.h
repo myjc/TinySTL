@@ -33,7 +33,7 @@ bool lexicographical_compare(InputIter1 begin1,InputIter1 end1,
 {
     for(; begin1 != end1 && begin2 != end2; ++begin1,++begin2)
     {
-        if(pred(*begin1,*end1))
+        if(pred(*begin1,*begin2))
             return true;
         if(pred(*begin2,*begin1))
             return false;
