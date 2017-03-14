@@ -13,7 +13,8 @@ CONFIG += staticlib
 SOURCES += \
     Impl/Alloc.cpp \
     Impl/Vector.cpp \
-    main.cpp
+    main.cpp \
+    Impl/ListImpl.cpp
 
 HEADERS += \
     TypeTraits.h \
@@ -33,7 +34,8 @@ HEADERS += \
     Test/screen_show.h \
     Test/sort_test.h \
     Test/test_copy.h \
-    Test/vector_test.h
+    Test/vector_test.h \
+    List.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

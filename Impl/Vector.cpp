@@ -2,7 +2,8 @@
 namespace TinySTL
 {
 template<typename T,typename Alloc>
-iterator Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
+typename Vector<T,Alloc>::iterator
+Vector<T,Alloc>::insert_aux(iterator position, const value_type& val)
 {
     if(finish_ != end_of_storage_)
     {
@@ -66,7 +67,8 @@ void Vector<T,Alloc>::resize(size_type new_size, value_type val)
     }
 }//end resize
 template<typename T,typename Alloc>
-iterator Vector<T,Alloc>::insert(iterator position,size_type nobjs,const value_type& value)
+typename Vector<T,Alloc>::iterator
+Vector<T,Alloc>::insert(iterator position,size_type nobjs,const value_type& value)
 {
     if(capacity() - size() >= nobjs)
     {
@@ -104,7 +106,8 @@ iterator Vector<T,Alloc>::insert(iterator position,size_type nobjs,const value_t
 }
 template<typename T,typename Alloc>
 template<typename InputIterator>
-iterator Vector<T,Alloc>::insert(iterator position,InputIterator begin,InputIterator end)
+typename Vector<T,Alloc>::iterator
+Vector<T,Alloc>::insert(iterator position,InputIterator begin,InputIterator end)
 {
     if(begin == end)
     {

@@ -98,6 +98,7 @@ public:
     ReverseIterator& operator=(const self& iter)
     {
         current_ = iter.current_;
+        return *this;
     }
     ~ReverseIterator() = default;
 public:

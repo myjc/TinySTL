@@ -23,6 +23,7 @@ struct ListIterator:public iterator<bidirectional_iterator_tag,T>
 public:
     typedef ListNode<T> Node;
     Node* nodePtr_;
+
 public:
     //constructor
     explicit ListIterator(Node* ptr):nodePtr_(ptr){}
@@ -30,6 +31,7 @@ public:
     ListIterator& operator=(const ListIterator &iter)
     {
         nodePtr_ = iter.nodePtr_;
+        return *this;
     }
 
 public:
@@ -42,8 +44,8 @@ public:
         return nodePtr_ != iter.nodePtr_;
     }
 
-    value_type operator*(){ return (*nodePtr_).data_; }
-    reference operator->(){ return &this->operator *();}
+    T& operator*(){ return (*nodePtr_).data_; }
+    T* operator->(){ return &this->operator *();}
     ListIterator& operator++()
     {
         nodePtr_ = nodePtr_->nextNode_;
@@ -78,6 +80,7 @@ public:
     typedef allocator<Node,Alloc>  NodeAllocator;
     typedef ListIterator<T>     iterator;
     typedef size_t              size_type;
+    typedef T                   value_type;
     typedef T&                  reference;
     typedef T*                  pointer;
 private:
@@ -87,7 +90,7 @@ public:
     //constuctor
     List()
     {
-        nullNode_ = getNode();
+        nullNode_ = get_node();
         nullNode_->nextNode_ = nullNode_;
         nullNode_->preNode_ = nullNode_;
     }
@@ -100,34 +103,59 @@ public:
     reference back(){ return *(--end());}
     void push_back(const T& val){ insert(end(),val); }
     void push_front(const T& val){ insert(begin(),val); }
+    void pop_back()
+    {
+        iterator tmp = end();
+        erase(--tmp);
+    }
+    void pop_front(){ erase(begin()); }
     iterator insert(iterator pos,const T& val)
     {
         //双向链表新节点插入
-        Node* newNode = emplaceNode(val);
+        Node* newNode = emplace_node(val);
         newNode->nextNode_ = pos.nodePtr_;
         newNode->preNode_ = pos.nodePtr_->preNode_;
         pos.nodePtr_->preNode_ = newNode;
         newNode->preNode_->nextNode_ = newNode;
         return iterator(newNode);
     }
-
+    iterator insert(iterator pos, size_type n,const value_type& val);
+    iterator erase(iterator pos)
+    {
+        iterator iter = pos;
+        ++iter;
+        pos.nodePtr_->preNode_->nextNode_ = iter.nodePtr_;
+        iter.nodePtr_->preNode_ = pos.nodePtr_->preNode_;
+        destroy_node(pos.nodePtr_);
+        return iter;
+    }
+    iterator erase(iterator begin,iterator end);
+    void clear()
+    {
+        erase(begin(),end());
+    }
+    void resize(size_type n,value_type value = T());
+    void unique();
+    void remove(const value_type& value);
 private:
-    Node* getNode()
+    Node* get_node()
     {
         return allocator_.allocate();
     }
-    void putNode(Node* ptr){ allocator_.deallocate(ptr);}
-    Node* emplaceNode(const T& arg)
+    void put_node(Node* ptr){ allocator_.deallocate(ptr);}
+    Node* emplace_node(const T& arg)
     {
-        Node* tempNode = getNode();
+        Node* tempNode = get_node();
         construct(&tempNode->data_,arg);
         return tempNode;
     }
-    void destroyNode(Node* ptr)
+    void destroy_node(Node* ptr)
     {
         destroy(&ptr->data_);
-        putNode(ptr);
+        put_node(ptr);
     }
+    void transfer(iterator pos,iterator first,iterator last);
+    iterator merge(iterator begin1,iterator end1,iterator begin2,iterator end2);
 
 };
 }

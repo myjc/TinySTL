@@ -46,7 +46,7 @@ bool lexicographical_compare(InputIter1 begin1,InputIter1 end1,
                              InputIter2 begin2,InputIter2 end2)
 {
     typedef typename IteratorTraits<InputIter1>::value_type Type;
-    lexicographical_compare(begin1,end1,begin2,end2,
+    return lexicographical_compare(begin1,end1,begin2,end2,
                             [](const Type& a, const Type& b){ return a < b; });
 }
 //for_each
@@ -1040,7 +1040,6 @@ template<typename RandomAccessIterator,typename BinaryPred>
 void make_heap(RandomAccessIterator begin,RandomAccessIterator end,BinaryPred predicate)
 {
     typedef typename IteratorTraits<RandomAccessIterator>::difference_type  Distance;
-    typedef typename IteratorTraits<RandomAccessIterator>::value_type       value_type;
     Distance length = end - begin;
     if(length < 2) return;
     Distance need_percolate_down = (length -2)/2;
@@ -1076,7 +1075,7 @@ template<typename RandomAccessIterator>
 bool is_heap(RandomAccessIterator begin,RandomAccessIterator end)
 {
     typedef typename IteratorTraits<RandomAccessIterator>::value_type _T;
-    is_heap(begin,end,[](const _T& a, const _T& b){ return a < b;});
+    return is_heap(begin,end,[](const _T& a, const _T& b){ return a < b;});
 }
 
 /***********************************************************************************************/
@@ -1423,12 +1422,14 @@ bool pre_permutation(BidirectionalIterator begin,BidirectionalIterator end)
     //return pre_permutation(begin,end,[](value_type i1,value_type i2){return i1 < i2;});
 }
 //is_permutation
+/*
 template<typename BidirectionalIterator,typename BinaryPred>
 bool is_permutation(BidirectionalIterator begin1,BidirectionalIterator end1,
                     BidirectionalIterator begin2,BinaryPred predicate)
 {
 
 }
+*/
 /************************************************************************************************/
 /*                                     排序相关算法                                              */
 /************************************************************************************************/
