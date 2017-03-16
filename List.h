@@ -137,6 +137,10 @@ public:
     void resize(size_type n,value_type value = T());
     void unique();
     void remove(const value_type& value);
+    void splice(iterator position,List& x);
+    void splice(iterator position, List&,iterator iter);
+    void splice(iterator position, List &, iterator first,iterator last);
+    void merge(iterator begin1,iterator end1,iterator begin2,iterator end2);
 private:
     Node* get_node()
     {
@@ -155,7 +159,7 @@ private:
         put_node(ptr);
     }
     void transfer(iterator pos,iterator first,iterator last);
-    iterator merge(iterator begin1,iterator end1,iterator begin2,iterator end2);
+
 
 };
 }
