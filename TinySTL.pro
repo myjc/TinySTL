@@ -35,7 +35,8 @@ HEADERS += \
     Test/sort_test.h \
     Test/test_copy.h \
     Test/vector_test.h \
-    List.h
+    List.h \
+    Stack.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

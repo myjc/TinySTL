@@ -94,6 +94,11 @@ public:
         nullNode_->nextNode_ = nullNode_;
         nullNode_->preNode_ = nullNode_;
     }
+    ~List()
+    {
+        clear();
+    }
+
 public:
     iterator begin(){ return iterator(nullNode_->nextNode_);}
     iterator end(){ return iterator(nullNode_);}
@@ -134,13 +139,16 @@ public:
     {
         erase(begin(),end());
     }
+    void swap(List& x);
     void resize(size_type n,value_type value = T());
     void unique();
     void remove(const value_type& value);
     void splice(iterator position,List& x);
     void splice(iterator position, List&,iterator iter);
     void splice(iterator position, List &, iterator first,iterator last);
-    void merge(iterator begin1,iterator end1,iterator begin2,iterator end2);
+    void merge(List& x);
+    void reverse();
+    void sort();
 private:
     Node* get_node()
     {
