@@ -150,4 +150,11 @@ Vector<T,Alloc>::insert(iterator position,InputIterator begin,InputIterator end)
         return result;
     }
 }
+template<typename T,typename Alloc>
+void Vector<T,Alloc>::swap(Vector& vec)
+{
+    TinySTL::swap(start_,vec.start_);
+    TinySTL::swap(finish_,vec.finish_);
+    TinySTL::swap(end_of_storage_,vec.end_of_storage_);
+}
 }

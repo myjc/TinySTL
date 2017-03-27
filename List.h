@@ -149,6 +149,7 @@ public:
     void merge(List& x);
     void reverse();
     void sort();
+    void transfer(iterator pos,iterator first,iterator last);
 private:
     Node* get_node()
     {
@@ -166,7 +167,7 @@ private:
         destroy(&ptr->data_);
         put_node(ptr);
     }
-    void transfer(iterator pos,iterator first,iterator last);
+
 
 
 };

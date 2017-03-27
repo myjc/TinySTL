@@ -32,7 +32,7 @@ public:
     //构造 析构 赋值
     Vector():start_(nullptr),finish_(nullptr),end_of_storage_(nullptr){}
     explicit Vector(size_type nobjs) { fill_initialize(nobjs,value_type());}
-    Vector(size_type nobjs,const value_type& value) { fill_initialize(nobjs,value);}
+    Vector(const size_type& nobjs,const value_type& value) { fill_initialize(nobjs,value);}
     Vector(const Vector& vec):allocator_(vec.allocator_),
         start_(allocator_.allocate(vec.size()))
     {
@@ -161,6 +161,7 @@ public:
     template<typename InputIterator>
     iterator insert(iterator position,InputIterator first, InputIterator last);
     iterator insert(iterator position, size_type nobjs,const value_type &value);
+    void swap(Vector& vec);
 private:
     //help methods
     iterator allocate_and_fill(size_t nobjs,const value_type& val)

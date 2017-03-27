@@ -188,7 +188,7 @@ void Deque<T,Alloc,Buffsize>::clear()
     finish_ = start_;
 }
 template<typename T,typename Alloc,size_t Buffsize>
-Deque<T,Alloc,Buffsize>::iterator Deque<T,Alloc,Buffsize>::erase(iterator pos)
+typename Deque<T,Alloc,Buffsize>::iterator Deque<T,Alloc,Buffsize>::erase(iterator pos)
 {
     iterator next = pos;
     ++next;
@@ -206,7 +206,7 @@ Deque<T,Alloc,Buffsize>::iterator Deque<T,Alloc,Buffsize>::erase(iterator pos)
     return start_ + index;
 }
 template<typename T,typename Alloc,size_t Buffsize>
-Deque<T,Alloc,Buffsize>::iterator
+typename Deque<T,Alloc,Buffsize>::iterator
 Deque<T,Alloc,Buffsize>::insert(iterator pos,const value_type& val)
 {
     if(pos == start_)
@@ -226,8 +226,7 @@ Deque<T,Alloc,Buffsize>::insert(iterator pos,const value_type& val)
     }
 }
 template<typename T,typename Alloc,size_t Buffsize>
-Deque<T,Alloc,Buffsize>::iterator
-Deque<T,Alloc,Buffsize>::insert_aux(iterator pos,const value_type& val)
+void Deque<T,Alloc,Buffsize>::insert_aux(iterator pos,const value_type& val)
 {
     difference_type index = pos - start_;
     if(index < size() /2)
@@ -251,7 +250,7 @@ Deque<T,Alloc,Buffsize>::insert_aux(iterator pos,const value_type& val)
         pos = start_ + index;
         copy_backward(pos,back2,back1);
     }
-    *pos = x;
+    *pos = val;
     return pos;
 }
 }//end of namespace
