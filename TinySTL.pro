@@ -14,7 +14,9 @@ SOURCES += \
     Impl/Alloc.cpp \
     Impl/Vector.cpp \
     main.cpp \
-    Impl/ListImpl.cpp
+    Impl/ListImpl.cpp \
+    Impl/Deque.cpp \
+    Impl/hashtable.cpp
 
 HEADERS += \
     TypeTraits.h \
@@ -36,7 +38,10 @@ HEADERS += \
     Test/test_copy.h \
     Test/vector_test.h \
     List.h \
-    Stack.h
+    Stack.h \
+    Deque.h \
+    HashTable.h \
+    UnorderedSet.h
 unix {
     target.path = /usr/lib
     INSTALLS += target
