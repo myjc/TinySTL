@@ -36,6 +36,11 @@ struct Greater:public BinaryFunctor<T,T,bool>
 
 };
 template<typename T>
+struct Identity:public UnaryFunctor<T,T>
+{
+    T operator()(const T& val){ return val;}
+};
+template<typename T>
 struct EqualTo:public BinaryFunctor<T,T,bool>
 {
     bool operator() (const T& v1, const T& v2) const
